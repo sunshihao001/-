@@ -103,12 +103,12 @@ done_state:
   local_files_written: true
   tests_passed: true
   result_md_written: true
-  git_committed: PENDING_AT_RESULT_WRITE
-  git_commit: "PENDING_AT_RESULT_WRITE"
-  git_pushed: PENDING_AT_RESULT_WRITE
-  github_issue_commented: PENDING_AT_RESULT_WRITE
-  github_issue_comment_url: "PENDING_AT_RESULT_WRITE"
-  hermes_local_synced_with_remote: false
+  git_committed: true
+  git_commit: "59710d6f99943c6c97f4633eb08a9885dd523d06"
+  git_pushed: true
+  github_issue_commented: PENDING_AFTER_COMMIT
+  github_issue_comment_url: "PENDING_AFTER_COMMIT"
+  hermes_local_synced_with_remote: true
 ```
 
 ## Repo Sync Evidence
