@@ -163,12 +163,12 @@ done_state:
   local_files_written: true
   tests_passed: true
   result_md_written: true
-  git_committed: PENDING_AT_RESULT_WRITE
-  git_commit: "PENDING_AT_RESULT_WRITE"
-  git_pushed: PENDING_AT_RESULT_WRITE
-  github_issue_commented: false
-  github_issue_comment_url: "NOT_APPLICABLE"
-  hermes_local_synced_with_remote: false
+  git_committed: true
+  git_commit: "234ee62c8d19edd73fd2b46f14e2ceb8958157b0"
+  git_pushed: true
+  github_issue_commented: true
+  github_issue_comment_url: "https://github.com/sunshihao001/-/issues/1#issuecomment-4553111588"
+  hermes_local_synced_with_remote: true
 ```
 
 ## Repo Sync Evidence
