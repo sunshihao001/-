@@ -1,0 +1,90 @@
+# GPT 项目交接提示词
+
+## 你要做什么
+
+你将接手一个 Solana Meme 代币研究工作流系统的开发。这个系统的完整设计文档已经写好，你需要先读懂设计，然后按设计执行后续开发。
+
+## 项目位置
+
+所有文件在这台服务器上：
+
+```
+/root/sikk-gmgn/
+```
+
+## 必读文件（按顺序读）
+
+### 第一步：读总索引
+
+```
+/root/sikk-gmgn/design/README.md
+```
+
+这个文件是整个项目的地图。包含：系统定位、Phase 路线图、所有设计文件的索引、Skill 执行流程图、Hermes 特性利用方式、GMGN CLI 命令索引。先读这个建立全局理解。
+
+### 第二步：读工作流契约
+
+```
+/root/sikk-gmgn/design/phase0-workflow-contract.md
+```
+
+这是系统的宪法。包含：目录结构规范、标准 Handoff JSON Schema（所有 skill 输出的公共字段）、Phase State Schema（任务状态文件）、Status 枚举、Gate Decision 枚举、禁止事项、数据过期规则。后续所有 skill 的输出都必须符合这里定义的 schema。
+
+### 第三步：读 6 个 Skill 设计 + Controller
+
+按执行顺序：
+
+```
+/root/sikk-gmgn/design/phase1-skill-01-candidate-entry.md    ← 候选入口（验证 token 地址）
+/root/sikk-gmgn/design/phase1-skill-02-token-panel.md        ← 数据面板（对标 DexScreener）
+/root/sikk-gmgn/design/phase1-skill-03-wallet-roles.md       ← 钱包角色（对标 Nansen）
+/root/sikk-gmgn/design/phase1-skill-04-wallet-structure.md   ← 钱包结构（对标 Bubblemaps）
+/root/sikk-gmgn/design/phase1-skill-05-evidence-chain.md     ← 证据链汇总（对标 Arkham）
+/root/sikk-gmgn/design/phase1-skill-06-trade-gate.md         ← 门控判断
+/root/sikk-gmgn/design/phase1-skill-07-workflow-controller.md ← 流程总控
+```
+
+每个 skill 文件都包含：定位、输入字段、输出 JSON Schema、GMGN 命令映射、判断规则、降级规则、阻塞规则。
+
+## 已有的 GPT 执行提示词（参考用）
+
+```
+/root/sikk-gmgn/prompts/           ← .md 版本
+/root/sikk-gmgn/prompts-txt/       ← .txt 版本（内容相同）
+```
+
+这些是给 GPT 逐步执行研究分析用的提示词，不是开发提示词。可以参考里面的逻辑但不要和设计文档混淆。
+
+## 你读完之后需要理解的关键点
+
+1. **执行流**：candidate-entry → token-panel → wallet-roles → wallet-structure → evidence-chain → trade-gate，由 workflow-controller 串联
+2. **数据源**：所有链上数据通过 gmgn-cli 工具采集，每个 skill 设计文件里有完整的命令映射
+3. **输出规范**：每个 skill 输出一个 JSON 文件，schema 在 phase0 契约里定义公共字段，每个 skill 文件里定义专属字段
+4. **状态管理**：每个 token 分析任务有一个 phase_state.json，记录当前阶段、已完成阶段、阻塞信息
+5. **安全边界**：Phase 1 只做研究，最高门控到 PAPER_ONLY，禁止真实交易、禁止绝对性措辞
+6. **数据存储**：每个 token 的运行数据在 /root/sikk-gmgn/data/runs/<token_address>/ 下
+
+## 注意事项
+
+1. **不要改设计**：设计文档是已确认的，按设计执行，不要自己重新设计
+2. **不要跳步**：6 个 skill 有严格的前后依赖，不能跳过
+3. **不要越权**：controller 不做业务判断，每个 skill 只做自己范围内的事
+4. **字段不能编造**：API 没返回的数据放 missing_fields，不填默认值
+5. **措辞规范**：所有结构判断用"疑似"、"候选"、"证据等级"，不用"确定"、"一定"
+6. **目录规范**：代码放 /root/sikk-gmgn/skills/ 下对应目录，数据放 /root/sikk-gmgn/data/，不要在其他地方建文件
+7. **运行环境**：系统运行在 Hermes Agent 上，利用 Hermes 的 skill 系统、cron、Telegram gateway、memory、delegation
+
+## 当前状态
+
+- Phase 0（工作流契约）：✅ 设计完成
+- Phase 1（6 Skills + Controller）：✅ 设计完成
+- Phase 1 代码实现：❌ 未开始 ← 你从这里接手
+- Phase 2-5：未开始
+
+## 你接下来可能被要求做的事
+
+- 把设计文档转成 Hermes skill 实际代码
+- 实现 workflow-controller 的调度逻辑
+- 接入 gmgn-cli 做真实数据采集
+- 对一个 token 跑一次端到端测试
+- 写 Phase 2（Paper Trading）设计

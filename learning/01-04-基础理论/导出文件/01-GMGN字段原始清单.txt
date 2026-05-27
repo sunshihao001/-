@@ -1,0 +1,429 @@
+GMGN 字段原始清单 v1.0
+==================================================
+来源：GMGN gmgn-skills GitHub repo（2026-05-24 采集）
+来源文件：
+  - skills/gmgn-token/SKILL.md
+  - skills/gmgn-market/SKILL.md
+  - skills/gmgn-track/SKILL.md
+  - GMGN 页面 Trending 截图
+采集方式：从官方 API 文档提取，未调用真实 API
+状态：字段研究阶段，不包含任何交易判断
+
+边界声明：
+  - 本文件只记录 GMGN 给了哪些字段
+  - 不判断字段组合说明什么
+  - 不判断 token 好坏
+  - 不判断钱包结构
+  - 不判断市场阶段
+  - 不输出策略 / paper / 执行
+  - 禁止 live / swap / private key / signing / broadcast
+
+==================================================
+第 1 类：Token 基础字段
+==================================================
+来源 API：token info / market trending / market trenches
+
+field_name              | source_api         | value_type   | description
+------------------------|--------------------|--------------|-----------
+address                 | token info         | string       | Token 合约地址
+symbol                  | token info         | string       | Token 代号
+name                    | token info         | string       | Token 全名
+decimals                | token info         | integer      | Token 小数位
+total_supply            | token info         | string       | 总供应量
+circulating_supply      | token info         | string       | 流通供应量
+max_supply              | token info         | string       | 最大供应量
+logo                    | token info         | string(url)  | Token logo 图片 URL
+chain                   | trending           | string       | 所属链标识
+creation_timestamp      | token info         | unix_seconds | Token 创建时间
+open_timestamp          | token info         | unix_seconds | Token 开始交易时间
+launchpad               | token info         | string       | Launchpad 标识 (pump, moonshot 等)
+launchpad_status        | token info         | integer      | Launchpad 状态: 0=未开放, 1=进行中, 2=已迁移
+launchpad_progress      | token info         | float(0-1)   | Bonding curve 进度
+launchpad_platform      | token info         | string       | Launchpad 平台名
+migrated_pool           | token info         | string       | 迁移后的池子地址
+migration_market_cap    | token info         | float(USD)   | 迁移时市值
+ath_price               | token info         | float(USD)   | 历史最高价
+locked_ratio            | token info         | float(0-1)   | 锁定比例
+og                      | token info         | boolean      | 是否 OG token
+is_on_curve             | token holders      | boolean      | 是否仍在 bonding curve 上
+
+==================================================
+第 2 类：Pair / Pool 字段
+==================================================
+来源 API：token info (pool object) / token pool
+
+field_name                  | source_api     | value_type   | description
+----------------------------|----------------|--------------|-----------
+biggest_pool_address        | token info     | string       | 主池地址
+pool.pool_address           | token info     | string       | 池合约地址
+pool.quote_address          | token info     | string       | 报价 token 地址
+pool.quote_symbol           | token info     | string       | 报价 token 代号 (USDC, SOL 等)
+pool.exchange               | token info     | string       | DEX 名 (raydium, pump_amm, meteora 等)
+pool.liquidity              | token info     | float(USD)   | 池子流动性 USD
+pool.base_reserve           | token info     | string       | 基础 token 储备量
+pool.quote_reserve          | token info     | string       | 报价 token 储备量
+pool.base_reserve_value     | token info     | float(USD)   | 基础储备 USD 价值
+pool.quote_reserve_value    | token info     | float(USD)   | 报价储备 USD 价值
+pool.fee_ratio              | token info     | float        | 交易费率 (0.1 = 0.1%)
+pool.creation_timestamp     | token info     | unix_seconds | 池子创建时间
+exchange                    | trending       | string       | 当前 DEX
+initial_liquidity           | trending       | float(USD)   | 初始流动性
+
+==================================================
+第 3 类：Market Activity 字段
+==================================================
+来源 API：token info (price object) / market trending / market trenches / market kline
+
+--- 价格字段 ---
+field_name                  | source_api     | value_type   | description
+----------------------------|----------------|--------------|-----------
+price.price                 | token info     | string(USD)  | 当前价格
+price.price_{1m,5m,1h,6h,24h} | token info  | string(USD)  | 各窗口起始价格
+price                       | trending       | float(USD)   | 当前价格 (直接字段)
+market_cap                  | trending       | float(USD)   | 市值
+usd_market_cap              | trenches       | float(USD)   | 市值
+liquidity                   | trending       | float(USD)   | 流动性
+history_highest_market_cap  | trending       | float(USD)   | 历史最高市值
+
+--- 交易量字段 ---
+price.volume_{1m,5m,1h,6h,24h}     | token info | string(USD) | 各窗口总交易量 USD
+price.buy_volume_{1m,5m,1h,6h,24h} | token info | string(USD) | 各窗口买入量 USD
+price.sell_volume_{1m,5m,1h,6h,24h}| token info | string(USD) | 各窗口卖出量 USD
+volume                              | trending   | float(USD)  | 查询区间交易量
+volume_1h                           | trenches   | float(USD)  | 1 小时交易量
+volume_24h                          | trenches   | float(USD)  | 24 小时交易量
+net_buy_24h                         | trenches   | float(USD)  | 24h 净买入量
+
+--- 交易笔数字段 ---
+price.buys_{1m,5m,1h,6h,24h}       | token info | integer     | 各窗口买入笔数
+price.sells_{1m,5m,1h,6h,24h}      | token info | integer     | 各窗口卖出笔数
+price.swaps_{1m,5m,1h,6h,24h}      | token info | integer     | 各窗口总 swap 数
+swaps                               | trending   | integer     | 查询区间 swap 数
+buys / sells                        | trending   | integer     | 查询区间买卖数
+swaps_1m / swaps_1h / swaps_24h    | trenches   | integer     | 各窗口 swap 数
+buys_24h / sells_24h               | trenches   | integer     | 24h 买卖数
+
+--- 价格变化字段 ---
+price_change_percent                | trending   | float(%)    | 查询区间价格变化
+price_change_percent1m              | trending   | float(%)    | 1 分钟价格变化
+price_change_percent5m              | trending   | float(%)    | 5 分钟价格变化
+price_change_percent1h              | trending   | float(%)    | 1 小时价格变化
+
+--- K 线字段 ---
+time                                | kline      | unix_ms     | K 线开始时间（毫秒）
+open                                | kline      | string(USD) | 开盘价
+close                               | kline      | string(USD) | 收盘价
+high                                | kline      | string(USD) | 最高价
+low                                 | kline      | string(USD) | 最低价
+volume (kline)                      | kline      | string(USD) | USD 交易量
+amount (kline)                      | kline      | string      | Token 单位交易量
+
+--- 热度字段 ---
+price.hot_level                     | token info | integer     | 热度等级
+hot_level                           | trending   | integer     | 热度等级
+rank                                | trending   | integer     | 排名位置
+gas_fee                             | trending   | float       | 平均 gas 费
+
+--- Holder 数量 ---
+holder_count                        | token info | integer     | 持有者数
+holder_count                        | trending   | integer     | 持有者数
+
+==================================================
+第 4 类：Risk Warning 字段
+==================================================
+来源 API：token security / market trending / market trenches
+
+--- 合约安全 ---
+field_name                  | source_api       | value_type     | description
+----------------------------|------------------|-----------     |-----------
+is_honeypot                 | token security   | string         | 是否貔貅 (BSC/Base; SOL 为空)
+open_source                 | token security   | string         | 合约是否开源
+owner_renounced             | token security   | string         | 所有权是否放弃
+renounced_mint              | token security   | boolean        | Mint 权限是否放弃 (SOL)
+renounced_freeze_account    | token security   | boolean        | Freeze 权限是否放弃 (SOL)
+buy_tax                     | token security   | float          | 买入税 (0.03 = 3%)
+sell_tax                    | token security   | float          | 卖出税
+
+--- 持仓集中度风险 ---
+top_10_holder_rate          | token security   | float(0-1)     | Top 10 持仓比例
+dev_team_hold_rate          | token security   | float(0-1)     | 开发团队持仓比例
+creator_balance_rate        | token security   | float(0-1)     | 创建者持仓比例
+creator_token_status        | token security   | string         | 开发者持仓状态 (creator_hold / creator_close)
+suspected_insider_hold_rate | token security   | float(0-1)     | 疑似内部人持仓比例
+
+--- 交易风险 ---
+rug_ratio                   | token security   | float(0-1)     | Rug pull 风险分数
+is_wash_trading             | token security   | boolean        | 是否检测到刷量
+rat_trader_amount_rate      | token security   | float(0-1)     | 内部人交易量比例
+bundler_trader_amount_rate  | token security   | float(0-1)     | Bot 捆绑交易比例
+bundler_rate                | trending         | float(0-1)     | Bot 捆绑交易比例 (trending 版本)
+entrapment_ratio            | trending         | float(0-1)     | 诱捕交易比例
+sniper_count                | token security   | integer        | 狙击手钱包数
+burn_status                 | token security   | string         | LP 燃烧状态 (burn / 空)
+lock_percent                | trending         | float          | 锁仓比例
+top70_sniper_hold_rate      | trending         | float(0-1)     | Top 70 sniper 持仓比例
+bot_degen_count             | trending         | integer        | Bot degen 钱包数
+bot_degen_rate              | trending         | float(0-1)     | Bot degen 比例
+
+==================================================
+第 5 类：Wallet / Holder 字段
+==================================================
+来源 API：token info (stat + wallet_tags_stat) / token holders / token traders
+
+--- Wallet 标签统计 ---
+field_name                          | source_api         | value_type | description
+------------------------------------|--------------------|-----------|-----------
+wallet_tags_stat.smart_wallets      | token info         | integer   | Smart money 钱包数
+wallet_tags_stat.renowned_wallets   | token info         | integer   | KOL 钱包数
+wallet_tags_stat.sniper_wallets     | token info         | integer   | Sniper 钱包数
+wallet_tags_stat.rat_trader_wallets | token info         | integer   | Rat trader 钱包数
+wallet_tags_stat.bundler_wallets    | token info         | integer   | Bundler bot 钱包数
+wallet_tags_stat.whale_wallets      | token info         | integer   | 鲸鱼钱包数
+wallet_tags_stat.fresh_wallets      | token info         | integer   | 新钱包数
+wallet_tags_stat.top_wallets        | token info         | integer   | Top 排名钱包数
+smart_degen_count                   | trending           | integer   | Smart money 持有者数
+renowned_count                      | trending           | integer   | KOL 持有者数
+bluechip_owner_percentage           | trending           | float(0-1)| 蓝筹持有者比例
+
+--- Stat 字段 ---
+stat.holder_count                   | token info         | integer   | 持有者数
+stat.top_10_holder_rate             | token info         | float(0-1)| Top 10 持仓比
+stat.dev_team_hold_rate             | token info         | float(0-1)| Dev 团队持仓比
+stat.creator_hold_rate              | token info         | float(0-1)| 创建者持仓比
+stat.creator_token_balance          | token info         | string    | 创建者 token 余额
+stat.top_rat_trader_percentage      | token info         | float(0-1)| Rat trader 交易比
+stat.top_bundler_trader_percentage  | token info         | float(0-1)| Bundler 交易比
+stat.top_entrapment_trader_percentage| token info        | float(0-1)| 诱捕交易比
+stat.bot_degen_count                | token info         | integer   | Bot degen 数
+stat.bot_degen_rate                 | token info         | float(0-1)| Bot degen 比
+stat.fresh_wallet_rate              | token info         | float(0-1)| 新钱包比例
+stat.private_vault_hold_rate        | token info         | float(0-1)| 私人金库(vanish)持仓比
+
+--- 单个 Holder/Trader 字段 (token holders / token traders) ---
+address                             | holders/traders    | string    | 钱包地址
+account_address                     | holders/traders    | string    | Token 账户地址
+addr_type                           | holders/traders    | integer   | 地址类型 (0=普通, 2=交易所/池)
+exchange                            | holders/traders    | string    | 交易所/池名
+wallet_tag_v2                       | holders/traders    | string    | 排名标签 (TOP1, TOP2...)
+native_balance                      | holders/traders    | string    | 原生 token 余额
+balance                             | holders/traders    | string    | Token 余额
+amount_cur                          | holders/traders    | string    | 当前持有量
+usd_value                           | holders/traders    | float(USD)| 当前持有 USD 价值
+amount_percentage                   | holders/traders    | float(0-1)| 持有总供应比例
+is_new                              | holders/traders    | boolean   | 是否新创建钱包
+is_suspicious                       | holders/traders    | boolean   | 是否可疑钱包
+transfer_in                         | holders/traders    | boolean   | 当前持仓是否转入(非买入)
+
+--- 交易汇总 ---
+buy_volume_cur                      | holders/traders    | float(USD)| 总买入量 USD
+sell_volume_cur                     | holders/traders    | float(USD)| 总卖出量 USD
+buy_amount_cur                      | holders/traders    | string    | 总买入 token 数
+sell_amount_cur                     | holders/traders    | string    | 总卖出 token 数
+sell_amount_percentage              | holders/traders    | float(0-1)| 已卖出比例 (1.0=全清)
+buy_tx_count_cur                    | holders/traders    | integer   | 买入交易笔数
+sell_tx_count_cur                   | holders/traders    | integer   | 卖出交易笔数
+netflow_usd                         | holders/traders    | float(USD)| 净 USD 流入
+netflow_amount                      | holders/traders    | string    | 净 token 流入
+
+--- 成本与盈亏 ---
+avg_cost                            | holders/traders    | float(USD)| 平均买入价
+avg_sold                            | holders/traders    | float(USD)| 平均卖出价
+history_bought_cost                 | holders/traders    | float(USD)| 历史总买入成本
+history_sold_income                 | holders/traders    | float(USD)| 历史总卖出收入
+total_cost                          | holders/traders    | float(USD)| 总成本基数
+profit                              | holders/traders    | float(USD)| 总利润 (已实现+未实现)
+profit_change                       | holders/traders    | float     | 利润率
+realized_profit                     | holders/traders    | float(USD)| 已实现利润
+realized_pnl                        | holders/traders    | float     | 已实现利润率
+unrealized_profit                   | holders/traders    | float(USD)| 未实现利润
+unrealized_pnl                      | holders/traders    | float     | 未实现利润率
+
+--- 转账历史 ---
+current_transfer_in_amount          | holders/traders    | string    | 当期转入量
+current_transfer_out_amount         | holders/traders    | string    | 当期转出量
+history_transfer_in_amount          | holders/traders    | string    | 历史总转入量
+history_transfer_in_cost            | holders/traders    | float(USD)| 转入成本估算
+history_transfer_out_amount         | holders/traders    | string    | 历史总转出量
+transfer_in_count                   | holders/traders    | integer   | 转入次数
+transfer_out_count                  | holders/traders    | integer   | 转出次数
+
+--- 时间 ---
+start_holding_at                    | holders/traders    | unix_sec  | 首次持有时间
+end_holding_at                      | holders/traders    | unix_sec  | 完全退出时间 (null=仍持有)
+last_active_timestamp               | holders/traders    | unix_sec  | 最近活动时间
+last_block                          | holders/traders    | integer   | 最近活动区块
+
+--- 钱包身份 ---
+name                                | holders/traders    | string    | 钱包显示名
+twitter_username                    | holders/traders    | string    | X/Twitter 用户名
+twitter_name                        | holders/traders    | string    | X/Twitter 显示名
+avatar                              | holders/traders    | string    | 头像 URL
+tags                                | holders/traders    | array     | 平台级钱包标签 (kol, smart_degen, axiom 等)
+maker_token_tags                    | holders/traders    | array     | Token 级行为标签 (bundler, paper_hands, top_holder 等)
+created_at                          | holders/traders    | unix_sec  | 钱包创建时间
+
+--- 资金来源 ---
+native_transfer                     | holders/traders    | object    | 首次原生 token 转入记录(资金来源追溯)
+native_transfer.address             | holders/traders    | string    | 资金来源地址 (同源钱包检测依据)
+
+--- 最近交易记录 ---
+token_transfer                      | holders/traders    | object    | 最近 token 转账 (含 address, timestamp, tx_hash, type)
+token_transfer_in                   | holders/traders    | object    | 最近转入
+token_transfer_out                  | holders/traders    | object    | 最近转出
+
+==================================================
+第 6 类：Social / Attention 字段
+==================================================
+来源 API：token info (link object) / market trending / market trenches
+
+field_name                  | source_api     | value_type   | description
+----------------------------|----------------|--------------|-----------
+link.twitter_username       | token info     | string       | X/Twitter 用户名
+link.website                | token info     | string(url)  | 项目网站
+link.telegram               | token info     | string(url)  | Telegram 链接
+link.discord                | token info     | string(url)  | Discord 链接
+link.instagram              | token info     | string(url)  | Instagram 链接
+link.tiktok                 | token info     | string(url)  | TikTok 链接
+link.youtube                | token info     | string(url)  | YouTube 链接
+link.description            | token info     | string       | Token 描述文本
+link.verify_status          | token info     | integer      | 社交验证状态
+link.gmgn                   | token info     | string(url)  | GMGN 页面链接
+link.geckoterminal          | token info     | string(url)  | GeckoTerminal 链接
+twitter_username            | trending       | string       | X 用户名
+website                     | trending       | string(url)  | 项目网站
+telegram                    | trending       | string(url)  | Telegram
+cto_flag                    | trending       | integer      | 社区接管标志 (1=已接管)
+has_at_least_one_social     | trenches       | boolean      | 是否有任何社交链接
+x_user_follower             | trenches       | integer      | X 粉丝数
+
+==================================================
+补充类：Dev / Creator 字段
+==================================================
+来源 API：token info (dev object)
+
+field_name                          | source_api  | value_type   | description
+------------------------------------|-------------|--------------|-----------
+dev.creator_address                 | token info  | string       | 创建者钱包地址
+dev.creator_token_balance           | token info  | string       | 创建者当前 token 余额
+dev.creator_token_status            | token info  | string       | 创建者持仓状态 (hold/sell)
+dev.top_10_holder_rate              | token info  | float(0-1)   | Top 10 持仓比 (dev 视角)
+dev.twitter_name_change_history     | token info  | array        | Twitter 改名历史
+dev.dexscr_ad                       | token info  | integer      | 是否购买 DexScreener 广告
+dev.dexscr_update_link              | token info  | integer      | 是否更新 DexScreener 链接
+dev.dexscr_boost_fee                | token info  | integer      | 是否使用 DexScreener Boost
+dev.dexscr_trending_bar             | token info  | integer      | 是否出现在 DexScreener trending
+dev.dexscr_ad_ts                    | token info  | unix_seconds | DexScreener 广告时间
+dev.dexscr_update_link_ts           | token info  | unix_seconds | DexScreener 链接更新时间
+dev.dexscr_boost_ts                 | token info  | unix_seconds | DexScreener Boost 时间
+dev.dexscr_trending_bar_ts          | token info  | unix_seconds | DexScreener trending 时间
+dev.cto_flag                        | token info  | integer      | 社区接管标志
+dev.fund_from                       | token info  | string       | 创建者资金来源地址
+dev.fund_from_ts                    | token info  | unix_seconds | 资金来源时间
+dev.creator_open_count              | token info  | integer      | 创建者历史发币数
+dev.twitter_del_post_token_count    | token info  | integer      | 创建者删推数
+dev.twitter_create_token_count      | token info  | integer      | 创建者推广 token 数
+dev.offchain                        | token info  | boolean      | 是否 offchain token
+dev.ath_token_info                  | token info  | object       | 创建者历史最好 token 信息
+dev.ath_token_info.ath_mc           | token info  | string(USD)  | 历史最好 token 的 ATH 市值
+dev.ath_token_info.symbol           | token info  | string       | 历史最好 token 代号
+
+--- Dev 状态 (trending/trenches) ---
+creator_token_status                | trending    | string       | 开发者持仓状态
+creator_close                       | trending    | boolean      | 是否已清仓
+dev_token_burn_ratio                | trending    | float        | Dev token 燃烧比例
+creator_balance_rate                | trenches    | float(0-1)   | 创建者持仓比
+
+==================================================
+补充类：Fee Distribution 字段
+==================================================
+来源 API：token info (fee_distribution object)
+
+field_name                              | source_api | value_type | description
+----------------------------------------|------------|-----------|-----------
+fee_distribution.launchpad              | token info | string    | Launchpad 类型 (pump / bankr)
+fee_distribution.platform_data          | token info | object    | 平台费用配置
+platform_data.fee_authority             | token info | string    | 费用权限地址 (pump)
+platform_data.is_locked                 | token info | boolean   | 费用配置是否锁定
+platform_data.deployer                  | token info | string    | 部署者地址 (bankr)
+platform_data.fee_recipient             | token info | string    | 费用接收地址
+platform_data.list[].wallet             | token info | string    | 分成钱包地址
+platform_data.list[].royalty_bps        | token info | integer   | 分成比例 (10000=100%)
+platform_data.list[].is_creator         | token info | boolean   | 是否原始创建者
+platform_data.list[].has_claimed_fee    | token info | boolean   | 是否已领取费用
+
+==================================================
+补充类：DexScreener 营销字段
+==================================================
+来源 API：market trending / market trenches
+
+field_name              | source_api     | value_type | description
+------------------------|----------------|-----------|-----------
+dexscr_ad               | trending       | integer   | 是否投放 DexScreener 广告
+dexscr_update_link      | trending       | integer   | 是否更新 DexScreener 链接
+dexscr_trending_bar     | trending       | integer   | 是否购买 trending bar
+dexscr_boost_fee        | trending       | float     | DexScreener Boost 金额
+
+==================================================
+补充类：Signal 字段
+==================================================
+来源 API：market signal
+
+field_name              | source_api     | value_type   | description
+------------------------|----------------|--------------|-----------
+signal_type             | market signal  | string       | 信号类型 (price spike, smart money buy, large buy, dex ad, cto 等)
+trigger_at              | market signal  | unix_seconds | 信号触发时间
+token_address           | market signal  | string       | 相关 token 地址
+
+==================================================
+Wallet Tag 可用值参考
+==================================================
+以下是 token holders / token traders 的 --tag 可用值：
+
+tag 值              | 描述
+--------------------|------
+smart_degen         | 历史高胜率钱包 (smart money)
+renowned            | KOL / 知名钱包
+fresh_wallet        | 无历史交易的新钱包
+dev                 | Token 开发者钱包
+sniper              | 发射时狙击买入的钱包
+rat_trader          | 内部人 / 老鼠仓钱包
+bundler             | Bot 捆绑买入钱包
+transfer_in         | 有转入记录的钱包
+dex_bot             | DEX bot 钱包 (Axiom, Photon, BullX 等)
+bluechip_owner      | 持有蓝筹 token 的钱包
+
+==================================================
+字段统计
+==================================================
+Token 基础字段：21 个
+Pair / Pool 字段：14 个
+Market Activity 字段：约 45 个 (含多时间窗口展开)
+Risk Warning 字段：约 22 个
+Wallet / Holder 字段：约 65 个 (含 holder/trader 详细字段)
+Social / Attention 字段：16 个
+Dev / Creator 字段：约 22 个
+Fee Distribution 字段：8 个
+DexScreener 营销字段：4 个
+Signal 字段：3 个
+Wallet Tag 值：10 种
+
+总计：约 230+ 个可用字段
+来源 API 覆盖：token info / token security / token pool / token holders / token traders / market trending / market trenches / market kline / market signal
+
+==================================================
+下一步
+==================================================
+本清单只回答：GMGN 给了哪些字段。
+下一份文档（02-GMGN字段词典.txt）将逐字段补充：
+  - allowed_usage
+  - forbidden_usage
+  - missing_behavior
+  - downstream_candidate
+  - evidence_required
+
+当前阶段不研究：
+  - 字段组合说明什么
+  - 钱包结构
+  - 市场阶段
+  - 策略规则
+  - paper / 执行

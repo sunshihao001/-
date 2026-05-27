@@ -1,0 +1,725 @@
+operational_brief:
+  task_name: "拆解 GMGN 候选池"
+  professional_term: "Candidate Token Pool Concept Deconstruction"
+  stage_position: "GMGN 入口 → raw_evidence → candidate_token_pool → risk_filter"
+  operating_capability: "mapping"
+  state:
+    current: "PROFESSIONAL_FRAMING"
+    next: "INTAKE_GATE"
+  purpose:
+    real_problem: "防止把 GMGN 热榜、标签、早期买入、风险通过等外部字段误读成买入信号或执行许可。"
+    downstream_consumer:
+      - "GMGN 字段词典"
+      - "candidate_token 对象定义"
+      - "风险过滤状态机"
+      - "source_to_canonical_mapping"
+  required_inputs:
+    available:
+      - "GMGN 是入口"
+      - "Hermes 是状态层"
+      - "候选池进入后要经过风险过滤、钱包结构分析、市场阶段门控"
+      - "禁止 live / swap / private key / signing / broadcast"
+    missing:
+      - "正式 GMGN 字段词典"
+      - "candidate_token schema"
+      - "entry_reason 分类"
+      - "状态机进入 / 退出条件"
+  data_objects:
+    read:
+      - "用户给出的 GMGN 候选池上下文"
+      - "SIKK governance doctrine"
+    write: []
+    forbidden:
+      - "买入信号"
+      - "执行许可"
+      - "paper-ready 结论"
+      - "live trading"
+      - "swap / private key / signing / broadcast"
+  gates:
+    artifact_readiness: "PATCH_REQUIRED"
+    contract_ticket: "NOT_REQUIRED"
+    validation_boundary: "NOT_APPLICABLE"
+    gbrain_openase_boundary: "NOT_USED"
+  execution_decision:
+    status: "PREFLIGHT_ONLY"
+    reason: "本次只做概念拆解，不创建运行 artifact，不调用 GMGN，不进入策略或 paper。"
+  allowed_plan:
+    mode: "PREFLIGHT_ONLY"
+    steps:
+      - "拆解候选池概念"
+      - "拆解候选、入口、信号、过滤、状态、授权之间的边界"
+      - "给出可落地定义"
+  forbidden:
+    - "把 GMGN 字段解释为买入建议"
+    - "生成交易动作"
+    - "跳过 strategy_contract / decision_ticket"
+  acceptance_evidence:
+    required:
+      - "候选池定义清楚"
+      - "候选池和买入信号分离"
+      - "字段用途和禁止用途分离"
+      - "下一步可转为 schema / 字段词典"
+    completion_definition: "用户能用一句话说清 GMGN 候选池是什么、不是什​​么、慢在哪里。"
+
+# 概念拆解：GMGN 候选池
+
+## 你以为它是什么
+
+常见理解：
+
+GMGN 上发现一批看起来有机会的 token，把它们放进一个列表。
+
+这个理解太粗。
+
+它会让人自然滑向：
+
+GMGN 热榜
+→ 候选
+→ 有机会
+→ 盯盘
+→ paper
+→ 执行
+
+问题就在这里。
+
+“候选池”这个词听起来很中性，但它很容易偷偷承担 3 种含义：
+
+- 发现列表；
+- 机会列表；
+- 准信号列表。
+
+这 3 个含义必须拆开。
+
+## 它在不同场景中的使用方式
+
+### 1. GMGN 产品语境里的“候选”
+
+意思通常是：
+
+这个 token 正在被市场注意到。
+
+它关心的是：
+
+- 热度；
+- 成交；
+- 涨幅；
+- 钱包活动；
+- 榜单位置；
+- 风险提示；
+- 页面可见性。
+
+这里的“候选”偏市场注意力。
+
+### 2. 交易者语境里的“候选”
+
+意思通常是：
+
+这个 token 我可能会买。
+
+它关心的是：
+
+- 有没有机会；
+- 能不能冲；
+- 有没有庄；
+- smart money 有没有进；
+- 现在是不是早；
+- 还能不能上车。
+
+这里的“候选”偏机会判断。
+
+### 3. SIKK / Hermes 系统语境里的“候选”
+
+意思必须改成：
+
+这个 token 被系统发现，允许进入检查流程。
+
+它关心的是：
+
+- 证据是否保存；
+- 来源是否明确；
+- 字段是否可映射；
+- 风险是否待查；
+- 钱包线索是否待验证；
+- 市场阶段是否未判断；
+- 下游权限是否被限制。
+
+这里的“候选”偏工作流状态。
+
+## 关键混淆
+
+### 混淆 1：候选 = 机会
+
+错。
+
+候选只表示：
+
+值得检查。
+
+不表示：
+
+值得买。
+
+更准确：
+
+候选 = 检查对象
+机会 = 经过多层判断后的可能结论
+
+### 混淆 2：入口 = 信号
+
+错。
+
+GMGN 是入口。
+
+入口的意思：
+
+它把对象送进系统。
+
+信号的意思：
+
+系统经过证据、映射、特征、结构判断后形成的判断对象。
+
+入口在前。信号在后。
+
+GMGN 字段直接变成信号，系统就被外部平台接管了。
+
+### 混淆 3：风险通过 = 安全
+
+错。
+
+GMGN 风险通过只能表示：
+
+在 GMGN 当前字段和检测范围内，没有显示某些风险。
+
+不能表示：
+
+这个 token 安全。
+
+缺失字段尤其危险。
+
+缺字段应该进入：
+
+NEED_MORE_EVIDENCE
+
+不能进入：
+
+PASS
+
+### 混淆 4：smart money = 结构确认
+
+错。
+
+smart money 标签只是外部标签。
+
+它最多表示：
+
+某个被标记的钱包发生了某个动作。
+
+还没有证明：
+
+- 这个钱包这次判断正确；
+- 它没有卖出；
+- 它不是诱导流动性；
+- 它不是跟单；
+- 它和 dev 无关；
+- 它代表一个钱包集群；
+- 它能形成结构优势。
+
+所以 smart money 只能进入：
+
+wallet_label_evidence
+
+不能直接进入：
+
+structure_signal
+
+### 混淆 5：早期买入 = 庄家入场
+
+错。
+
+早期买入只是时序事实。
+
+它要继续追问：
+
+- 谁买的？
+- 买多少？
+- 用什么钱包买？
+- 钱从哪里来？
+- 是否多个钱包同时买？
+- 是否同一资金源？
+- 买完是否分发？
+- 是否已经卖？
+- 历史上是否重复出现？
+
+所以早期买入只能先表示：
+
+early_wallet_activity
+
+还不能表示：
+
+庄家结构成立。
+
+# 概念还原
+
+## 原始语境
+
+“候选池”在系统设计里，更接近：
+
+queue / pool / staging area
+
+也就是：
+
+待处理对象集合。
+
+它不是判断结果。
+
+它只是一个中间容器。
+
+## 核心属性
+
+GMGN 候选池有 5 个核心属性：
+
+### 1. 来源属性
+
+它必须知道对象从哪里来。
+
+source = GMGN
+
+没有来源，不能追溯。
+
+### 2. 进入原因属性
+
+它必须知道为什么进来。
+
+entry_reason = volume_spike / smart_money_label / early_wallet_activity / manual_watchlist
+
+没有进入原因，后面无法归因。
+
+### 3. 证据属性
+
+它必须保留原始证据。
+
+raw_evidence_ref = 原始页面 / 请求 / 响应 / 截图 / 字段快照
+
+没有原始证据，后面只能靠记忆。
+
+### 4. 状态属性
+
+它必须知道自己在哪一步。
+
+current_state = CANDIDATE / RISK_CHECKING / NEED_MORE_EVIDENCE / REJECT
+
+没有状态，候选池会变成收藏夹。
+
+### 5. 禁止属性
+
+它必须知道自己不能去哪里。
+
+forbidden_downstream:
+  - no_live_trading
+  - no_swap
+  - no_private_key
+  - no_signing
+  - no_broadcast
+  - no_execution_permission
+
+没有禁止属性，候选池会滑向交易信号池。
+
+## 商业迁移中的扭曲
+
+“候选池”这个词在交易语境里最容易被扭曲。
+
+原本：
+
+待检查对象
+
+被扭曲成：
+
+机会清单
+
+再被扭曲成：
+
+准信号
+
+最后变成：
+
+买入前置列表
+
+这就是语言蛊惑。
+
+一个中性词，慢慢带上执行冲动。
+
+## 适用边界
+
+“GMGN 候选池”这个概念只适用于：
+
+- 发现 token；
+- 保存来源；
+- 保存字段；
+- 记录进入原因；
+- 进入风险过滤；
+- 等待钱包结构分析；
+- 等待市场阶段判断；
+- 支持后续复盘。
+
+它不适用于：
+
+- 直接输出买入建议；
+- 直接进入 paper；
+- 直接生成策略；
+- 直接判断庄家；
+- 直接判断 smart money 有效；
+- 直接判断风险安全；
+- 直接授权执行。
+
+# 用大白话说
+
+GMGN 候选池就是：
+
+GMGN 上出现了一些 token，系统先把它们登记下来，说明为什么看到它们，保存当时看到的证据，然后一个个检查风险、钱包、阶段。登记下来不代表看好，更不代表可以买。
+
+再短一点：
+
+候选池是待检查名单，不是机会名单。
+
+再硬一点：
+
+GMGN 候选池只负责收案，不负责判案。
+
+# 这是 Question 还是 Problem？
+
+这是 Problem，不是 Question。
+
+表面问题像是：
+
+GMGN 候选池这一步该慢在哪里？
+
+这看起来可以用文字回答。
+
+但真实问题是：
+
+如何建立一个不会把外部热度误读成交易许可的系统？
+
+这个问题不能只靠一句定义解决。
+
+它需要实践过程：
+
+1. 定义 candidate_token 对象；
+2. 定义 GMGN 字段词典；
+3. 定义 entry_reason；
+4. 定义状态机；
+5. 定义 forbidden_downstream；
+6. 定义 raw_evidence 保存规则；
+7. 定义 GMGN → canonical mapping；
+8. 定义风险过滤入口；
+9. 用真实 token 手动跑 20 次；
+10. 复盘误判和缺字段。
+
+所以这不是“想明白一个词”。
+
+这是“把词变成系统契约”。
+
+# 7 张表：GMGN 候选池本体论
+
+## 1. 对象表
+
+基本对象：
+
+- token
+- gmgn_source
+- raw_evidence
+- gmgn_field
+- entry_reason
+- candidate_token
+- candidate_state
+- risk_status
+- wallet_clue
+- market_activity
+- evidence_gap
+- downstream_consumer
+- forbidden_downstream
+- audit_record
+
+这些是最小对象。
+
+少一个，候选池就容易变形。
+
+## 2. 事态表
+
+原子事态：
+
+- GMGN 发现了一个 token。
+- token 有一个地址。
+- token 有一个发现时间。
+- token 有一个进入原因。
+- GMGN 提供了一组字段。
+- 系统保存了原始证据。
+- 某个字段缺失。
+- 某个字段触发风险检查。
+- 某个钱包标签触发钱包分析。
+- 某个状态允许进入下一步。
+- 某个状态禁止进入执行。
+- 某个 token 被拒绝。
+- 某个 token 需要补证据。
+
+这些事态都要能单独记录。
+
+## 3. 复合事态表
+
+复杂现象：
+
+### 现象 1：token 进入候选池
+
+由这些原子事态组成：
+
+GMGN 发现 token
++ token 地址可识别
++ entry_reason 存在
++ raw_evidence 保存
++ 初始状态设为 CANDIDATE
++ forbidden_downstream 写入
+
+### 现象 2：token 进入风险过滤
+
+组成：
+
+candidate_token 存在
++ raw_evidence 可追溯
++ 风险字段可读取
++ 缺失字段被标记
++ current_state = RISK_CHECKING
+
+### 现象 3：token 被拒绝
+
+组成：
+
+风险字段或证据显示不可接受
++ reject_reason 被记录
++ raw_evidence_ref 存在
++ current_state = REJECT
++ 下游全部禁止
+
+### 现象 4：token 需要补证据
+
+组成：
+
+关键字段缺失
++ 缺失字段影响判断
++ missing_fields 被记录
++ current_state = NEED_MORE_EVIDENCE
++ next_check 被写入
+
+## 4. 关系表
+
+### 关系 1：GMGN 字段和 raw evidence
+
+GMGN 字段属于 raw_evidence，不属于最终判断。
+
+### 关系 2：entry_reason 和 candidate_token
+
+entry_reason 解释 token 为什么进池。
+
+### 关系 3：candidate_state 和 downstream_consumer
+
+不同状态决定不同下游能不能消费。
+
+### 关系 4：wallet_clue 和 structure_signal
+
+wallet_clue 只能触发结构分析，不能直接等于 structure_signal。
+
+### 关系 5：risk_status 和 market_phase
+
+风险没过，市场阶段不用判断。
+
+### 关系 6：candidate_token 和 execution
+
+candidate_token 默认没有执行权限。
+
+## 5. 规则表
+
+### 规则 1：候选不等于信号
+
+CANDIDATE ≠ SIGNAL
+
+### 规则 2：入口不等于判断
+
+GMGN_ENTRY ≠ STRUCTURE_JUDGMENT
+
+### 规则 3：标签不等于事实全貌
+
+WALLET_LABEL ≠ WALLET_STRUCTURE
+
+### 规则 4：缺失不等于通过
+
+UNKNOWN ≠ PASS
+
+### 规则 5：风险未过不进入钱包结构
+
+RISK_REJECTED → STOP
+
+### 规则 6：结构判断不等于策略行为
+
+STRUCTURE_SIGNAL ≠ STRATEGY_BEHAVIOR
+
+### 规则 7：paper 必须有 contract 和 ticket
+
+NO_STRATEGY_CONTRACT + NO_DECISION_TICKET → NO_PAPER
+
+### 规则 8：候选池默认禁止执行
+
+candidate_token.default_permission = no_execution
+
+## 6. 形式表
+
+候选池的逻辑形式：
+
+External Discovery
+→ Evidence Capture
+→ Candidate Registration
+→ State Assignment
+→ Risk Gate
+→ Wallet Analysis Gate
+→ Market Phase Gate
+→ Strategy Gate
+→ Decision Ticket Gate
+→ Paper-only Review
+
+压缩成一句：
+
+发现对象 → 保存证据 → 登记状态 → 逐层门控
+
+错误形式：
+
+GMGN 热度 → 机会 → 信号 → 执行
+
+正确形式：
+
+GMGN 热度 → raw evidence → candidate → risk / wallet / phase gates → review status
+
+## 7. 定义表
+
+### GMGN
+
+定义：
+
+GMGN 是外部发现入口和字段来源。
+
+禁止定义：
+
+GMGN 是策略判断器。
+
+### 候选池
+
+定义：
+
+候选池是一组已经被发现、已登记来源和进入原因、等待系统检查的 token 对象集合。
+
+禁止定义：
+
+候选池是机会池。
+
+### 候选 token
+
+定义：
+
+candidate_token 是一个带 source、entry_reason、raw_evidence_ref、current_state、missing_fields、next_check、forbidden_downstream 的待检查对象。
+
+禁止定义：
+
+candidate_token 是可交易对象。
+
+### entry_reason
+
+定义：
+
+entry_reason 是 token 进入候选池的触发原因。
+
+禁止定义：
+
+entry_reason 是看多理由。
+
+### raw_evidence
+
+定义：
+
+raw_evidence 是原始请求、响应、字段、截图、错误和采集上下文的保存记录。
+
+禁止定义：
+
+raw_evidence 是结论。
+
+### wallet_clue
+
+定义：
+
+wallet_clue 是钱包相关线索，用于触发钱包结构分析。
+
+禁止定义：
+
+wallet_clue 是庄家确认。
+
+### risk_pass
+
+定义：
+
+risk_pass 是某个风险检查范围内暂未发现拒绝条件。
+
+禁止定义：
+
+risk_pass 是安全保证。
+
+### NEED_MORE_EVIDENCE
+
+定义：
+
+NEED_MORE_EVIDENCE 是证据不足导致无法继续判断的状态。
+
+禁止定义：
+
+NEED_MORE_EVIDENCE 是弱通过。
+
+### PAPER_REVIEW_CANDIDATE
+
+定义：
+
+PAPER_REVIEW_CANDIDATE 是等待 strategy_contract 和 decision_ticket 审查的 paper-only 候选状态。
+
+禁止定义：
+
+PAPER_REVIEW_CANDIDATE 是准备交易。
+
+# 最终拆解
+
+GMGN 候选池不是：
+
+- 热榜池；
+- smart money 池；
+- 机会池；
+- 信号池；
+- paper 池；
+- 执行池。
+
+GMGN 候选池是：
+
+带证据、带来源、带状态、带禁止下游的待检查 token 对象集合。
+
+它慢的地方是：
+
+定义对象
+定义字段
+定义状态
+定义禁止用途
+定义缺证据处理
+定义下游消费条件
+
+它快的地方是：
+
+发现
+记录
+去重
+归档
+导出
+同步状态
+
+一句话：
+
+GMGN 候选池只负责把 token 合法地送进检查流程；它不负责告诉你买什么。

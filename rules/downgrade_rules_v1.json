@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.0",
+  "rule_set": "downgrade_rules_v1",
+  "rules": [
+    {
+      "rule_id": "D01-MISSING-INPUT",
+      "skill_name": "meme-candidate-entry",
+      "condition": "required upstream input missing or empty",
+      "downgrade_reason": "missing required upstream input",
+      "severity": "medium",
+      "missing_fields": [
+        "required_input"
+      ],
+      "recovery_action": "rerun upstream phase or mark NEED_MORE_DATA when critical",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D02-MISSING-INPUT",
+      "skill_name": "meme-token-panel",
+      "condition": "required upstream input missing or empty",
+      "downgrade_reason": "missing required upstream input",
+      "severity": "medium",
+      "missing_fields": [
+        "required_input"
+      ],
+      "recovery_action": "rerun upstream phase or mark NEED_MORE_DATA when critical",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D03-MISSING-INPUT",
+      "skill_name": "meme-wallet-roles",
+      "condition": "required upstream input missing or empty",
+      "downgrade_reason": "missing required upstream input",
+      "severity": "medium",
+      "missing_fields": [
+        "required_input"
+      ],
+      "recovery_action": "rerun upstream phase or mark NEED_MORE_DATA when critical",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D04-MISSING-INPUT",
+      "skill_name": "meme-wallet-structure",
+      "condition": "required upstream input missing or empty",
+      "downgrade_reason": "missing required upstream input",
+      "severity": "medium",
+      "missing_fields": [
+        "required_input"
+      ],
+      "recovery_action": "rerun upstream phase or mark NEED_MORE_DATA when critical",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D05-MISSING-INPUT",
+      "skill_name": "meme-evidence-chain",
+      "condition": "required upstream input missing or empty",
+      "downgrade_reason": "missing required upstream input",
+      "severity": "medium",
+      "missing_fields": [
+        "required_input"
+      ],
+      "recovery_action": "rerun upstream phase or mark NEED_MORE_DATA when critical",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D06-MISSING-INPUT",
+      "skill_name": "meme-trade-gate",
+      "condition": "required upstream input missing or empty",
+      "downgrade_reason": "missing required upstream input",
+      "severity": "high",
+      "missing_fields": [
+        "required_input"
+      ],
+      "recovery_action": "rerun upstream phase or mark NEED_MORE_DATA when critical",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D07-MISSING-INPUT",
+      "skill_name": "meme-workflow-controller",
+      "condition": "required upstream input missing or empty",
+      "downgrade_reason": "missing required upstream input",
+      "severity": "medium",
+      "missing_fields": [
+        "required_input"
+      ],
+      "recovery_action": "rerun upstream phase or mark NEED_MORE_DATA when critical",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D20",
+      "skill_name": "meme-token-panel",
+      "condition": "kline unavailable",
+      "downgrade_reason": "Insufficient kline data",
+      "severity": "low",
+      "missing_fields": [
+        "kline"
+      ],
+      "recovery_action": "refresh market_kline within 30m",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D21",
+      "skill_name": "meme-token-panel",
+      "condition": "no social fields",
+      "downgrade_reason": "No social presence",
+      "severity": "low",
+      "missing_fields": [
+        "social.twitter_username",
+        "social.website",
+        "social.telegram"
+      ],
+      "recovery_action": "continue with downgraded confidence",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D30",
+      "skill_name": "meme-wallet-roles",
+      "condition": "holder list unavailable",
+      "downgrade_reason": "Unable to classify wallet roles",
+      "severity": "high",
+      "missing_fields": [
+        "gmgn_token_holders_response"
+      ],
+      "recovery_action": "rerun holders query or mark UNABLE_TO_CLASSIFY",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D40",
+      "skill_name": "meme-wallet-structure",
+      "condition": "native_transfer_from empty",
+      "downgrade_reason": "No funding source data",
+      "severity": "medium",
+      "missing_fields": [
+        "native_transfer_from"
+      ],
+      "recovery_action": "continue but cap structure confidence",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D41",
+      "skill_name": "meme-wallet-structure",
+      "condition": "start_holding_at empty",
+      "downgrade_reason": "No holding timestamp data",
+      "severity": "medium",
+      "missing_fields": [
+        "start_holding_at"
+      ],
+      "recovery_action": "continue but cap timing analysis",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D50",
+      "skill_name": "meme-evidence-chain",
+      "condition": "conflicting signals",
+      "downgrade_reason": "Conflicting signals",
+      "severity": "medium",
+      "missing_fields": [
+        "behavior_signals"
+      ],
+      "recovery_action": "preserve counter-evidence and downgrade",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D60",
+      "skill_name": "meme-trade-gate",
+      "condition": "evidence_chain confidence < 0.6",
+      "downgrade_reason": "Low gate confidence",
+      "severity": "high",
+      "missing_fields": [
+        "evidence_chain.confidence_score"
+      ],
+      "recovery_action": "cap decision at WATCH unless NEED_MORE_DATA",
+      "version": "v1"
+    },
+    {
+      "rule_id": "D70",
+      "skill_name": "meme-workflow-controller",
+      "condition": "stale phase detected",
+      "downgrade_reason": "Stale phase output",
+      "severity": "medium",
+      "missing_fields": [
+        "valid_until"
+      ],
+      "recovery_action": "rerun stale phase before summary",
+      "version": "v1"
+    }
+  ]
+}

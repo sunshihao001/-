@@ -1,0 +1,63 @@
+{
+  "schema_version": "2.0",
+  "skill_name": "meme-chip-control",
+  "token_address": "",
+  "snapshot_time": "",
+  "valid_until": "",
+  "chip_control_status": "",
+  "maintenance_type": null,
+  "status_confidence": 0.0,
+  "state_probabilities": {
+    "ESTABLISHING": 0.0,
+    "ESTABLISHED": 0.0,
+    "MAINTAINED": 0.0,
+    "LOOSENING": 0.0,
+    "TRANSFERRING": 0.0,
+    "COLLAPSED": 0.0,
+    "UNKNOWN": 0.0
+  },
+  "scores": {
+    "control_stock_score": 0.0,
+    "control_inflow_score": 0.0,
+    "control_outflow_score": 0.0,
+    "net_control_flow_score": 0.0,
+    "chip_control_retention_score": 0.0,
+    "structure_exit_intensity_score": 0.0,
+    "counterparty_pressure_score": 0.0,
+    "distribution_progress_score": 0.0,
+    "control_invalidation_risk": 0.0
+  },
+  "ooda": {
+    "ooda_status": "",
+    "input_freshness_sec": 0,
+    "analysis_latency_sec": 0,
+    "market_half_life_sec": 0,
+    "remaining_validity_sec": 0,
+    "refresh_required": false
+  },
+  "transition_result": {
+    "previous_status": null,
+    "candidate_status": "",
+    "transition_allowed": true,
+    "transition_confidence": 0.0,
+    "fallback_status": null
+  },
+  "downstream_contract": {
+    "recommended_downstream": "",
+    "allowed_for_lifecycle_classification": true,
+    "allowed_for_final_gate": true,
+    "paper_ready_allowed": false
+  },
+  "unknown_reason": null,
+  "pause_reason": null,
+  "entity_weight_distribution": {
+    "top_entity_weight": 0.0,
+    "top3_weight": 0.0,
+    "same_source_top_group_weight": 0.0,
+    "entity_weight_concentration_score": 0.0
+  },
+  "per_entity_control_weight": [],
+  "entity_control_veto_evidence": [],
+  "supporting_evidence": [],
+  "counter_evidence": []
+}

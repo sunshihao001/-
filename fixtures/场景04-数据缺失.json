@@ -1,0 +1,241 @@
+{
+  "fixture_id": "场景04-数据缺失",
+  "description": "native_transfer_from 全空，NEED_MORE_DATA",
+  "mock_inputs": {
+    "candidate_entry_input": {
+      "mode": "manual",
+      "token_address": "So11111111111111111111111111111111",
+      "chain": "sol"
+    },
+    "gmgn_token_info_response": {
+      "data": {
+        "symbol": "MOCK",
+        "name": "Mock Token",
+        "price": 0.01,
+        "market_cap": 1000000,
+        "liquidity": 100000,
+        "holder_count": 500,
+        "total_supply": 1000000000,
+        "pair_age_seconds": 3600,
+        "smart_degen_count": 3,
+        "creator_address": "CREATOR1"
+      }
+    },
+    "gmgn_token_security_response": {
+      "data": {
+        "is_honeypot": "no",
+        "renounced_mint": true,
+        "renounced_freeze_account": true,
+        "buy_tax": 0,
+        "sell_tax": 0,
+        "rug_ratio": 0.05,
+        "top_10_holder_rate": 0.15,
+        "creator_token_status": "creator_close",
+        "creator_balance_rate": 0,
+        "is_wash_trading": false
+      }
+    },
+    "gmgn_token_pool_response": {
+      "data": {
+        "exchange": "Raydium",
+        "liquidity": 100000
+      }
+    },
+    "gmgn_market_kline_response": {
+      "data": {
+        "candles": [
+          {
+            "open": 0.01,
+            "high": 0.012,
+            "low": 0.009,
+            "close": 0.011,
+            "volume": 2000
+          }
+        ]
+      }
+    },
+    "gmgn_token_holders_response": {
+      "data": [
+        {
+          "address": "W0",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W1",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W2",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W3",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W4",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W5",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W6",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W7",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W8",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W9",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W10",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W11",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W12",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W13",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W14",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W15",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W16",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W17",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W18",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        },
+        {
+          "address": "W19",
+          "amount_percentage": 0.01,
+          "native_transfer_from": "",
+          "start_holding_at": 0
+        }
+      ]
+    },
+    "gmgn_portfolio_stats_response": {
+      "data": {
+        "winrate": 0.5,
+        "pnl": 1000
+      }
+    },
+    "gmgn_created_tokens_response": {
+      "data": {
+        "items": [
+          {
+            "symbol": "A",
+            "token_ath_mc": 200000,
+            "status": "graduated"
+          }
+        ]
+      }
+    }
+  },
+  "expected_outputs": {
+    "candidate_entry": {
+      "status": "PASS"
+    },
+    "token_panel": {
+      "status": "PASS",
+      "risk_score_card": {
+        "overall_risk": "low"
+      },
+      "missing_fields": []
+    },
+    "wallet_roles": {
+      "status": "PASS",
+      "wallet_summary": {
+        "smart_money_count": 3
+      },
+      "missing_fields": []
+    },
+    "wallet_structure": {
+      "status": "WARN",
+      "structure_risk": {
+        "overall_structure_risk": "low"
+      },
+      "missing_fields": [
+        "native_transfer_from"
+      ],
+      "downgrade_reasons": [
+        "No funding source data"
+      ]
+    },
+    "evidence_chain": {
+      "status": "NEED_MORE_DATA",
+      "dominant_behavior": "ACCUMULATION",
+      "downgrade_reasons": [],
+      "missing_fields": [
+        "native_transfer_from"
+      ]
+    },
+    "trade_gate": {
+      "gate_decision": "NEED_MORE_DATA"
+    }
+  }
+}

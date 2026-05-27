@@ -1,0 +1,124 @@
+{
+  "completed": [
+    {
+      "token_address": "AySVbJiTw8U4jb4gDu8vT2M8Mi1vpFTYd8ngKEiCvNw5",
+      "completed_at": "2026-05-25T04:47:35.623614+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/AySVbJiTw8U4jb4gDu8vT2M8Mi1vpFTYd8ngKEiCvNw5/workflow_summary.md"
+    },
+    {
+      "token_address": "FJTfsV5Z8Zz3XgLahw8Be9PkR7WtSxLdqHXhqSdfRChx",
+      "completed_at": "2026-05-25T04:47:38.466869+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/FJTfsV5Z8Zz3XgLahw8Be9PkR7WtSxLdqHXhqSdfRChx/workflow_summary.md"
+    },
+    {
+      "token_address": "CGa9Qw99w3cwUziWGVjX7kN6aYFh5QvFcAohwQHcXUei",
+      "completed_at": "2026-05-25T04:47:41.325623+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/CGa9Qw99w3cwUziWGVjX7kN6aYFh5QvFcAohwQHcXUei/workflow_summary.md"
+    },
+    {
+      "token_address": "CssAZL3h6SxTMMbF8Aidqsxsyz5Di9kjx6RT72sRePev",
+      "completed_at": "2026-05-25T04:47:44.043748+00:00",
+      "gate_decision": "BLOCK",
+      "summary_file": "/root/sikk-gmgn/data/runs/CssAZL3h6SxTMMbF8Aidqsxsyz5Di9kjx6RT72sRePev/workflow_summary.md"
+    },
+    {
+      "token_address": "FSC3DB1hS86Fjo1DYV8Zw6CpAPWt9uLqy42bpdTtmzun",
+      "completed_at": "2026-05-25T04:47:46.847620+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/FSC3DB1hS86Fjo1DYV8Zw6CpAPWt9uLqy42bpdTtmzun/workflow_summary.md"
+    },
+    {
+      "token_address": "FYeMtppad5JeCbbdMeRspXHbA7Cd2wWcV3pks6w9uMeD",
+      "completed_at": "2026-05-25T04:47:49.577947+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/FYeMtppad5JeCbbdMeRspXHbA7Cd2wWcV3pks6w9uMeD/workflow_summary.md"
+    },
+    {
+      "token_address": "Cogk643FDXoanqdsMTtMEgqxmurkqHZMSVMGtVEsc7Hh",
+      "completed_at": "2026-05-25T04:47:52.362277+00:00",
+      "gate_decision": "BLOCK",
+      "summary_file": "/root/sikk-gmgn/data/runs/Cogk643FDXoanqdsMTtMEgqxmurkqHZMSVMGtVEsc7Hh/workflow_summary.md"
+    },
+    {
+      "token_address": "3uUA8j4VpVHPPfRKk1HXxvsV5oLgLrqvFinTJ2AMLnx2",
+      "completed_at": "2026-05-25T04:47:55.042651+00:00",
+      "gate_decision": "BLOCK",
+      "summary_file": "/root/sikk-gmgn/data/runs/3uUA8j4VpVHPPfRKk1HXxvsV5oLgLrqvFinTJ2AMLnx2/workflow_summary.md"
+    },
+    {
+      "token_address": "CPXDu3e6h28mZktqo6WQuzoEwauYZWAAixA1iSjbiyj3",
+      "completed_at": "2026-05-25T04:47:57.695412+00:00",
+      "gate_decision": "WATCH",
+      "summary_file": "/root/sikk-gmgn/data/runs/CPXDu3e6h28mZktqo6WQuzoEwauYZWAAixA1iSjbiyj3/workflow_summary.md"
+    },
+    {
+      "token_address": "EBLKytbozYWapiKp1hdpJsscD87TGwu6F85V4QbE7qCu",
+      "completed_at": "2026-05-25T04:48:00.421532+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/EBLKytbozYWapiKp1hdpJsscD87TGwu6F85V4QbE7qCu/workflow_summary.md"
+    },
+    {
+      "token_address": "SkeletonTest1111111111111111111111111111111",
+      "completed_at": "2026-05-26T09:32:56.705316+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/_skeleton_/SkeletonTest1111111111111111111111111111111/workflow_summary.md"
+    },
+    {
+      "token_address": "ResumeTest11111111111111111111111111111111",
+      "completed_at": "2026-05-26T09:35:03.605247+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/_skeleton_/ResumeTest11111111111111111111111111111111/workflow_summary.md"
+    },
+    {
+      "token_address": "P1Verification111111111111111111111111111111",
+      "completed_at": "2026-05-26T10:22:22.856531+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/_skeleton_/P1Verification111111111111111111111111111111/workflow_summary.md"
+    },
+    {
+      "token_address": "So33333333333333333333333333333333333333333",
+      "completed_at": "2026-05-26T12:16:00.273656+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/_skeleton_/So33333333333333333333333333333333333333333/workflow_summary.md"
+    },
+    {
+      "token_address": "So44444444444444444444444444444444444444444",
+      "completed_at": "2026-05-26T12:16:00.278262+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/_skeleton_/So44444444444444444444444444444444444444444/workflow_summary.md"
+    },
+    {
+      "token_address": "H6xYzjWkKWvzbNDpEPEri6LsCERf67bG27aQxH6jvfLX",
+      "completed_at": "2026-05-26T12:17:49.985677+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/H6xYzjWkKWvzbNDpEPEri6LsCERf67bG27aQxH6jvfLX/workflow_summary.md"
+    },
+    {
+      "token_address": "7WpgV7TVQdYBw6oJ6LvXmrTxL3riGocUiTyvY6hWtGqX",
+      "completed_at": "2026-05-26T12:30:14.290660+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/7WpgV7TVQdYBw6oJ6LvXmrTxL3riGocUiTyvY6hWtGqX/workflow_summary.md"
+    },
+    {
+      "token_address": "8nyFubX7DVhYUtwiUGywd2Dwjo64hpXqBm1Fq9aVMvzb",
+      "completed_at": "2026-05-26T12:30:17.203413+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/8nyFubX7DVhYUtwiUGywd2Dwjo64hpXqBm1Fq9aVMvzb/workflow_summary.md"
+    },
+    {
+      "token_address": "6434Ysd8im9q7nCemqiBhPzEnN3GpA2CdP2DSiJBT6Vt",
+      "completed_at": "2026-05-26T12:30:20.001061+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/6434Ysd8im9q7nCemqiBhPzEnN3GpA2CdP2DSiJBT6Vt/workflow_summary.md"
+    },
+    {
+      "token_address": "77eK5CxdTnqfGn25bx7DruW33Suv5Uoggo3zBThQkC7G",
+      "completed_at": "2026-05-26T12:30:22.946331+00:00",
+      "gate_decision": "NEED_MORE_DATA",
+      "summary_file": "/root/sikk-gmgn/data/runs/77eK5CxdTnqfGn25bx7DruW33Suv5Uoggo3zBThQkC7G/workflow_summary.md"
+    }
+  ]
+}

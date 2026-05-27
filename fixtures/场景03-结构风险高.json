@@ -1,0 +1,301 @@
+{
+  "fixture_id": "场景03-结构风险高",
+  "description": "同源钱包 >20%，WATCH",
+  "mock_inputs": {
+    "candidate_entry_input": {
+      "mode": "manual",
+      "token_address": "So11111111111111111111111111111111",
+      "chain": "sol"
+    },
+    "gmgn_token_info_response": {
+      "data": {
+        "symbol": "MOCK",
+        "name": "Mock Token",
+        "price": 0.01,
+        "market_cap": 1000000,
+        "liquidity": 100000,
+        "holder_count": 500,
+        "total_supply": 1000000000,
+        "pair_age_seconds": 3600,
+        "smart_degen_count": 3,
+        "creator_address": "CREATOR1"
+      }
+    },
+    "gmgn_token_security_response": {
+      "data": {
+        "is_honeypot": "no",
+        "renounced_mint": true,
+        "renounced_freeze_account": true,
+        "buy_tax": 0,
+        "sell_tax": 0,
+        "rug_ratio": 0.05,
+        "top_10_holder_rate": 0.15,
+        "creator_token_status": "creator_close",
+        "creator_balance_rate": 0,
+        "is_wash_trading": false
+      }
+    },
+    "gmgn_token_pool_response": {
+      "data": {
+        "exchange": "Raydium",
+        "liquidity": 100000
+      }
+    },
+    "gmgn_market_kline_response": {
+      "data": {
+        "candles": [
+          {
+            "open": 0.01,
+            "high": 0.012,
+            "low": 0.009,
+            "close": 0.011,
+            "volume": 2000
+          }
+        ]
+      }
+    },
+    "gmgn_token_holders_response": {
+      "data": [
+        {
+          "address": "W0",
+          "tags": [
+            "smart_degen"
+          ],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F0",
+          "start_holding_at": 600,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W1",
+          "tags": [
+            "smart_degen"
+          ],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F1",
+          "start_holding_at": 660,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W2",
+          "tags": [
+            "smart_degen"
+          ],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F2",
+          "start_holding_at": 720,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W3",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F3",
+          "start_holding_at": 780,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W4",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F4",
+          "start_holding_at": 840,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W5",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F5",
+          "start_holding_at": 900,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W6",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F6",
+          "start_holding_at": 960,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W7",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F7",
+          "start_holding_at": 1020,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W8",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F8",
+          "start_holding_at": 1080,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W9",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F9",
+          "start_holding_at": 1140,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W10",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F10",
+          "start_holding_at": 1200,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W11",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F11",
+          "start_holding_at": 1260,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W12",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F12",
+          "start_holding_at": 1320,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W13",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F13",
+          "start_holding_at": 1380,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W14",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F14",
+          "start_holding_at": 1440,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W15",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F15",
+          "start_holding_at": 1500,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W16",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F16",
+          "start_holding_at": 1560,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W17",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F17",
+          "start_holding_at": 1620,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W18",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F18",
+          "start_holding_at": 1680,
+          "sell_amount_percentage": 0
+        },
+        {
+          "address": "W19",
+          "tags": [],
+          "amount_percentage": 0.01,
+          "usd_value": 1000,
+          "native_transfer_from": "F19",
+          "start_holding_at": 1740,
+          "sell_amount_percentage": 0
+        }
+      ]
+    },
+    "gmgn_portfolio_stats_response": {
+      "data": {
+        "winrate": 0.5,
+        "pnl": 1000
+      }
+    },
+    "gmgn_created_tokens_response": {
+      "data": {
+        "items": [
+          {
+            "symbol": "A",
+            "token_ath_mc": 200000,
+            "status": "graduated"
+          }
+        ]
+      }
+    }
+  },
+  "expected_outputs": {
+    "candidate_entry": {
+      "status": "PASS"
+    },
+    "token_panel": {
+      "status": "PASS",
+      "risk_score_card": {
+        "overall_risk": "low"
+      },
+      "missing_fields": []
+    },
+    "wallet_roles": {
+      "status": "PASS",
+      "wallet_summary": {
+        "smart_money_count": 3
+      },
+      "missing_fields": []
+    },
+    "wallet_structure": {
+      "status": "WARN",
+      "structure_risk": {
+        "overall_structure_risk": "high",
+        "same_source_combined_pct": 0.24
+      },
+      "missing_fields": []
+    },
+    "evidence_chain": {
+      "status": "PASS",
+      "dominant_behavior": "ACCUMULATION",
+      "downgrade_reasons": [],
+      "missing_fields": []
+    },
+    "trade_gate": {
+      "gate_decision": "WATCH"
+    }
+  }
+}

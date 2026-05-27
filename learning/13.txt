@@ -1,0 +1,105 @@
+# 13｜多信号融合与置信度：Evidence Chain 如何避免单点误判
+
+## 这一篇要解决的问题
+
+这篇服务于 `Skill 05：meme-evidence-chain`。
+
+前面每个 skill 都会输出证据。Evidence Chain 的任务是把分散证据组织成可复核的推断链，避免系统被某一个 GMGN 标签、某一个钱包行为、某一个结构图误导。
+
+## 正文
+
+### 1. Evidence Chain 的职责
+
+Evidence Chain 负责回答：
+
+```text
+现有证据共同指向什么？
+有哪些反证？
+置信度来自哪些环节？
+哪些关键字段缺失？
+是否足以交给 trade gate？
+```
+
+它不负责输出交易动作。
+
+### 2. 单点证据的风险
+
+单点证据常见例子：
+
+- GMGN trending
+- smart money buy
+- top holder concentration
+- 某个 KOL wallet 出现
+- 短时间大涨
+- 某个安全字段通过
+
+这些都可能有价值，但都可能被污染。
+
+字段反推四问：
+
+- 量什么：量某个单独现象。
+- 能伪：几乎每个单点信号都能被刷量、拆钱包、滞后标签或短时行为污染。
+- 能算：通过对应 skill 输出读取。
+- 本质：单点证据只能是 chain 的节点。
+
+### 3. 支持证据与反证
+
+一个合格证据链至少要有：
+
+```text
+supporting_evidence
+counter_evidence
+missing_fields
+confidence_score
+downgrade_reasons
+```
+
+如果只有支持证据，没有反证检查，就容易形成确认偏差。
+
+### 4. 置信度的来源
+
+置信度不应该来自模型主观感觉，而应该来自：
+
+- 数据完整性
+- 多个 skill 是否一致
+- 关键反证是否缺失
+- 风险字段是否明确
+- 时间有效性是否仍在 valid_until 内
+
+### 5. 给 Trade Gate 的输入
+
+Evidence Chain 应该给 Trade Gate 一个结构化摘要：
+
+```text
+主要支持证据
+主要反证
+关键缺失字段
+建议 gate 候选
+置信度
+降级原因
+```
+
+但最终 gate decision 仍由 Skill 06 给出。
+
+## 小结
+
+- Evidence Chain 负责组织证据，不负责交易。
+- 单点信号只能作为节点。
+- 反证和 missing_fields 与支持证据同等重要。
+- 置信度来自数据质量和跨 skill 一致性。
+## 下一篇预告
+
+下一篇：14｜门控阈值与 Downgrade
+
+---
+
+## 学习反馈
+
+你可以写：
+
+1. 哪里看懂了？
+2. 哪里没看懂？
+3. 哪个地方想展开？
+4. 这个主题和你的真实问题有什么关系？
+
+请写在这行下面：

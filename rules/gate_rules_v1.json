@@ -1,0 +1,371 @@
+{
+  "schema_version": "1.0",
+  "rule_set": "gate_rules_v1",
+  "source_design": "design/phase1-skill-06-trade-gate.md",
+  "rules": [
+    {
+      "rule_id": "G01",
+      "rule_name": "Honeypot",
+      "category": "block",
+      "condition": "token_panel.security.is_honeypot == 'yes'",
+      "source_skills": [
+        "token_panel"
+      ],
+      "source_fields": [
+        "security.is_honeypot"
+      ],
+      "action": "BLOCK",
+      "threshold": "yes",
+      "rationale": "蜜罐合约无法卖出，必须阻断。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G02",
+      "rule_name": "Extreme Rug",
+      "category": "block",
+      "condition": "token_panel.security.rug_ratio > 0.5",
+      "source_skills": [
+        "token_panel"
+      ],
+      "source_fields": [
+        "security.rug_ratio"
+      ],
+      "action": "BLOCK",
+      "threshold": ">0.5",
+      "rationale": "rug_ratio 超过 0.5 表示极高收割风险。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G03",
+      "rule_name": "Unrenounced",
+      "category": "block",
+      "condition": "token_panel.security.renounced_mint == False AND token_panel.security.renounced_freeze_account == False",
+      "source_skills": [
+        "token_panel"
+      ],
+      "source_fields": [
+        "security.renounced_mint",
+        "security.renounced_freeze_account"
+      ],
+      "action": "BLOCK",
+      "threshold": "both false",
+      "rationale": "mint 与 freeze 均未放弃，发行方控制权过高。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G04",
+      "rule_name": "High Tax",
+      "category": "block",
+      "condition": "token_panel.security.buy_tax > 0.10 OR token_panel.security.sell_tax > 0.10",
+      "source_skills": [
+        "token_panel"
+      ],
+      "source_fields": [
+        "security.buy_tax",
+        "security.sell_tax"
+      ],
+      "action": "BLOCK",
+      "threshold": ">0.10",
+      "rationale": "交易税过高，进出成本和限制风险过高。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G05",
+      "rule_name": "Wash Trading",
+      "category": "block",
+      "condition": "token_panel.security.is_wash_trading == True AND evidence_chain.dominant_behavior == 'WASH'",
+      "source_skills": [
+        "token_panel",
+        "evidence_chain"
+      ],
+      "source_fields": [
+        "security.is_wash_trading",
+        "dominant_behavior"
+      ],
+      "action": "BLOCK",
+      "threshold": "true + WASH",
+      "rationale": "刷量交易被 token 安全与行为证据共同支持。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G06",
+      "rule_name": "Critical Structure",
+      "category": "block",
+      "condition": "wallet_structure.structure_risk.overall_structure_risk == 'critical' AND evidence_chain.confidence_score >= 0.7",
+      "source_skills": [
+        "wallet_structure",
+        "evidence_chain"
+      ],
+      "source_fields": [
+        "structure_risk.overall_structure_risk",
+        "confidence_score"
+      ],
+      "action": "BLOCK",
+      "threshold": "critical + >=0.7",
+      "rationale": "钱包结构 critical 且置信度足够高时不能继续。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G10",
+      "rule_name": "Dev Holding",
+      "category": "watch",
+      "condition": "token_panel.security.creator_token_status == 'creator_hold' AND token_panel.security.creator_balance_rate > 0.05",
+      "source_skills": [
+        "token_panel"
+      ],
+      "source_fields": [
+        "security.creator_token_status",
+        "security.creator_balance_rate"
+      ],
+      "action": "WATCH",
+      "threshold": ">0.05",
+      "rationale": "Dev 仍持有显著仓位，需观察。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G11",
+      "rule_name": "High Concentration",
+      "category": "watch",
+      "condition": "token_panel.security.top_10_holder_rate > 0.40",
+      "source_skills": [
+        "token_panel"
+      ],
+      "source_fields": [
+        "security.top_10_holder_rate"
+      ],
+      "action": "WATCH",
+      "threshold": ">0.40",
+      "rationale": "Top10 持仓集中度高。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G12",
+      "rule_name": "No Smart Money",
+      "category": "watch",
+      "condition": "token_panel.wallet_tags_stat.smart_wallets == 0 AND wallet_roles.wallet_summary.smart_money_count == 0",
+      "source_skills": [
+        "token_panel",
+        "wallet_roles"
+      ],
+      "source_fields": [
+        "wallet_tags_stat.smart_wallets",
+        "wallet_summary.smart_money_count"
+      ],
+      "action": "WATCH",
+      "threshold": "0",
+      "rationale": "缺少 smart money 参与证据。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G13",
+      "rule_name": "SM Distributing",
+      "category": "watch",
+      "condition": "wallet_roles.smart_money_behavior.sm_net_direction == 'distributing'",
+      "source_skills": [
+        "wallet_roles"
+      ],
+      "source_fields": [
+        "smart_money_behavior.sm_net_direction"
+      ],
+      "action": "WATCH",
+      "threshold": "distributing",
+      "rationale": "Smart money 净流向为派发。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G14",
+      "rule_name": "Low Liquidity",
+      "category": "watch",
+      "condition": "token_panel.basic_info.liquidity < 50000",
+      "source_skills": [
+        "token_panel"
+      ],
+      "source_fields": [
+        "basic_info.liquidity"
+      ],
+      "action": "WATCH",
+      "threshold": "<50000",
+      "rationale": "流动性低，滑点和退出风险高。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G15",
+      "rule_name": "High Rug Ratio",
+      "category": "watch",
+      "condition": "token_panel.security.rug_ratio >= 0.3 AND token_panel.security.rug_ratio <= 0.5",
+      "source_skills": [
+        "token_panel"
+      ],
+      "source_fields": [
+        "security.rug_ratio"
+      ],
+      "action": "WATCH",
+      "threshold": "0.3-0.5",
+      "rationale": "rug_ratio 进入高风险但未达一票否决区间。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G16",
+      "rule_name": "Structure Risk High",
+      "category": "watch",
+      "condition": "wallet_structure.structure_risk.overall_structure_risk == 'high'",
+      "source_skills": [
+        "wallet_structure"
+      ],
+      "source_fields": [
+        "structure_risk.overall_structure_risk"
+      ],
+      "action": "WATCH",
+      "threshold": "high",
+      "rationale": "钱包结构高风险。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G17",
+      "rule_name": "Bundler Dominated",
+      "category": "watch",
+      "condition": "wallet_roles.wallet_summary.bundler_count > wallet_roles.wallet_summary.smart_money_count + wallet_roles.wallet_summary.kol_count",
+      "source_skills": [
+        "wallet_roles"
+      ],
+      "source_fields": [
+        "wallet_summary.bundler_count",
+        "wallet_summary.smart_money_count",
+        "wallet_summary.kol_count"
+      ],
+      "action": "WATCH",
+      "threshold": "bundler > sm+kol",
+      "rationale": "Bundler 数量超过 SM+KOL，结构可能被打包行为主导。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G18",
+      "rule_name": "Divergence",
+      "category": "watch",
+      "condition": "evidence_chain.behavior_signals contains 'DIVERGENCE'",
+      "source_skills": [
+        "evidence_chain"
+      ],
+      "source_fields": [
+        "behavior_signals"
+      ],
+      "action": "WATCH",
+      "threshold": "DIVERGENCE",
+      "rationale": "价格与钱包行为出现背离信号。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "G19",
+      "rule_name": "Low Confidence",
+      "category": "watch",
+      "condition": "evidence_chain.confidence_score < 0.5",
+      "source_skills": [
+        "evidence_chain"
+      ],
+      "source_fields": [
+        "confidence_score"
+      ],
+      "action": "WATCH",
+      "threshold": "<0.5",
+      "rationale": "证据链置信度不足。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "PAPER_ONLY",
+      "rule_name": "Paper Only Eligibility",
+      "category": "paper_only",
+      "condition": "no BLOCK rules AND watch_count <= 2 AND evidence_chain.confidence_score >= 0.5 AND evidence_chain.dominant_behavior in ACCUMULATION|EARLY_STAGE AND smart_money_count >= 1 AND liquidity >= 10000 AND rug_ratio < 0.3",
+      "source_skills": [
+        "token_panel",
+        "wallet_roles",
+        "wallet_structure",
+        "evidence_chain"
+      ],
+      "source_fields": [
+        "confidence_score",
+        "dominant_behavior",
+        "wallet_summary.smart_money_count",
+        "basic_info.liquidity",
+        "security.rug_ratio"
+      ],
+      "action": "PAPER_ONLY",
+      "threshold": "composite",
+      "rationale": "Phase 1 最高只允许纸面研究候选。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    },
+    {
+      "rule_id": "NEED_MORE_DATA",
+      "rule_name": "Need More Data",
+      "category": "need_more_data",
+      "condition": "evidence_chain.status == NEED_MORE_DATA OR any missing_fields critical OR any upstream status == ERROR",
+      "source_skills": [
+        "token_panel",
+        "wallet_roles",
+        "wallet_structure",
+        "evidence_chain"
+      ],
+      "source_fields": [
+        "status",
+        "missing_fields"
+      ],
+      "action": "NEED_MORE_DATA",
+      "threshold": "composite",
+      "rationale": "关键字段缺失或上游错误时不可做可靠门控。",
+      "version": "v1",
+      "phase_allowed": [
+        "Phase 1"
+      ]
+    }
+  ]
+}

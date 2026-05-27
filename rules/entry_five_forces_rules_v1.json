@@ -1,0 +1,326 @@
+{
+  "schema_version": "1.0",
+  "rule_set": "entry_five_forces_rules_v1",
+  "owner_skill": "meme-candidate-entry",
+  "phase": "Phase 1",
+  "basis": "gmgn_field_combination_hint",
+  "source_documents": [
+    "docs/specs.md#S01 Candidate Entry Five-Forces Gate Contract",
+    "learning/GMGN字段组合五力模型理论总结.txt",
+    "learning/15-GMGN字段组合地基.md",
+    "design/phase1-research/00b-GMGN-Canonical-Bytes.txt",
+    "reports/cr_20260525_002_canonical_bytes_evidence_addendum.md"
+  ],
+  "basic_gate": {
+    "description": "Entry-layer basic qualification gate. Determines whether a token has enough market thickness to justify the full S02-S06 workflow.",
+    "decision_values": ["PASS", "FILTERED_OUT", "UNKNOWN"],
+    "thresholds": {
+      "min_liquidity": {
+        "value": 50000,
+        "unit": "USD",
+        "source_fields": ["liquidity", "pool.liquidity"],
+        "field_group": "canonical_bytes_0_1_price_market_cap / canonical_bytes_0_8_pool",
+        "raw_or_derived": "raw_gmgn_byte",
+        "reason_label": "liquidity_below_minimum",
+        "rationale": "Liquidity below this level means small flows can dominate price and full wallet-structure analysis is likely unstable. This preserves the existing first-pass engineering threshold from the learning material."
+      },
+      "min_market_cap": {
+        "value": 50000,
+        "unit": "USD",
+        "source_fields": ["market_cap", "usd_market_cap"],
+        "field_group": "canonical_bytes_0_1_price_market_cap",
+        "raw_or_derived": "raw_gmgn_byte",
+        "reason_label": "market_cap_below_minimum",
+        "rationale": "Very low market cap often represents a noise zone where one wallet can dominate price and candidate-entry analysis should filter rather than spend the full workflow."
+      },
+      "min_volume": {
+        "value": 10000,
+        "unit": "USD_1h_or_available_window",
+        "source_fields": ["volume_1h", "volume", "volume_{1m,5m,1h,6h,24h}"],
+        "field_group": "canonical_bytes_0_2_volume",
+        "raw_or_derived": "raw_gmgn_byte",
+        "reason_label": "volume_below_minimum",
+        "rationale": "A minimum activity floor is needed before interpreting spread, holder diffusion, or wallet behavior. Use the best available recent window and record missing fields when unavailable."
+      },
+      "min_holder_count": {
+        "value": 100,
+        "unit": "holders",
+        "source_fields": ["holder_count"],
+        "field_group": "canonical_bytes_0_3_holders_wallets",
+        "raw_or_derived": "raw_gmgn_byte",
+        "reason_label": "holder_count_below_minimum",
+        "rationale": "Too few holders means distribution has not formed and top-holder / wallet-role analysis is easily distorted by a small number of actors."
+      },
+      "min_swaps": {
+        "value": 100,
+        "unit": "swaps_1h_or_available_window",
+        "source_fields": ["swaps_1m", "swaps_1h", "swaps_24h", "swaps", "swaps_{1m,5m,1h,6h,24h}"],
+        "field_group": "canonical_bytes_0_2_volume",
+        "raw_or_derived": "raw_gmgn_byte",
+        "reason_label": "swaps_below_minimum",
+        "rationale": "The entry layer needs enough transaction observations to avoid overfitting one or two wallet actions. Use the closest available recent window and downgrade if unavailable."
+      }
+    },
+    "logic": {
+      "unknown_if_any_required_field_missing": ["liquidity", "market_cap", "volume", "holder_count", "swaps"],
+      "filtered_out_if_any_threshold_fails": ["min_liquidity", "min_market_cap", "min_volume", "min_holder_count", "min_swaps"],
+      "pass_if_all_thresholds_met": true,
+      "allowed_use": "entry_hint_or_filter",
+      "forbidden_use": "final_trade_decision"
+    }
+  },
+  "forces": {
+    "absorption_power": {
+      "description": "Market depth and value-pricing capacity. Positive force.",
+      "source_fields": ["liquidity", "pool.liquidity", "market_cap", "usd_market_cap", "volume_1h", "volume_24h", "net_buy_24h", "pool.base_reserve_value", "pool.quote_reserve_value"],
+      "field_group": "canonical_bytes_0_1_price_market_cap / canonical_bytes_0_2_volume / canonical_bytes_0_8_pool",
+      "raw_or_derived": "raw_gmgn_byte_plus_ratio",
+      "derived_metrics": ["liquidity_market_cap_ratio", "volume_liquidity_ratio"],
+      "bin_edges": {
+        "unknown": "liquidity or market_cap missing",
+        "weak": "liquidity < 50000 OR market_cap < 50000 OR liquidity_market_cap_ratio < 0.02",
+        "normal": "liquidity >= 50000 AND market_cap >= 50000 AND liquidity_market_cap_ratio >= 0.02",
+        "strong": "liquidity >= 150000 AND market_cap >= 250000 AND liquidity_market_cap_ratio >= 0.05 AND volume_liquidity_ratio >= 0.20"
+      },
+      "reason_labels": {
+        "weak": ["thin_liquidity", "low_market_thickness", "weak_liquidity_marketcap_ratio"],
+        "normal": ["basic_market_depth_present"],
+        "strong": ["strong_market_depth_and_activity"]
+      },
+      "allowed_use": "entry_hint_or_filter",
+      "forbidden_use": "buy_signal"
+    },
+    "diffusion_power": {
+      "description": "Participant and attention spread. Positive force.",
+      "source_fields": ["holder_count", "swaps", "swaps_1h", "swaps_24h", "buys", "sells", "buys_24h", "sells_24h", "volume", "smart_degen_count", "renowned_count", "bluechip_owner_percentage", "hot_level", "rank", "has_at_least_one_social", "x_user_follower"],
+      "field_group": "canonical_bytes_0_2_volume / canonical_bytes_0_3_holders_wallets / canonical_bytes_0_9_social_attention / canonical_bytes_0_10_heat",
+      "raw_or_derived": "raw_gmgn_byte_plus_ratio",
+      "derived_metrics": ["swaps_holder_ratio", "buy_sell_balance_ratio"],
+      "bin_edges": {
+        "unknown": "holder_count or swaps missing",
+        "weak": "holder_count < 100 OR swaps < 100 OR swaps_holder_ratio > 20",
+        "growing": "holder_count >= 100 AND swaps >= 100 AND swaps_holder_ratio <= 20",
+        "broad": "holder_count >= 500 AND swaps >= 500 AND buys > 0 AND sells > 0 AND swaps_holder_ratio <= 10"
+      },
+      "reason_labels": {
+        "weak": ["insufficient_participation", "activity_not_broadly_distributed", "possible_bot_like_activity"],
+        "growing": ["participation_growth_present"],
+        "broad": ["broad_participation_hint"]
+      },
+      "note": "GMGN labels and heat/rank are hints only; they must not hard-gate by themselves.",
+      "allowed_use": "entry_hint_or_filter",
+      "forbidden_use": "final_wallet_classification"
+    },
+    "control_power": {
+      "description": "Supply concentration, sniper/bundler/dev influence. Negative force.",
+      "source_fields": ["top_10_holder_rate", "dev_team_hold_rate", "creator_balance_rate", "creator_hold_rate", "suspected_insider_hold_rate", "sniper_wallets", "sniper_count", "bundler_wallets", "bundler_rate", "whale_wallets", "top70_sniper_hold_rate", "amount_percentage", "native_transfer.address"],
+      "field_group": "canonical_bytes_0_3_holders_wallets / canonical_bytes_0_4_concentration / canonical_bytes_0_5_safety_risk / canonical_bytes_0_11_holder_trader",
+      "raw_or_derived": "raw_gmgn_byte",
+      "bin_edges": {
+        "unknown": "top_10_holder_rate and concentration fields missing",
+        "low": "top_10_holder_rate < 0.30 AND bundler_rate < 0.10 AND sniper_count < 20",
+        "medium": "top_10_holder_rate >= 0.30 OR bundler_rate >= 0.10 OR sniper_count >= 20",
+        "high": "top_10_holder_rate >= 0.55 OR bundler_rate >= 0.25 OR top70_sniper_hold_rate >= 0.25 OR suspected_insider_hold_rate >= 0.20"
+      },
+      "reason_labels": {
+        "medium": ["moderate_holder_concentration", "moderate_bundler_or_sniper_presence"],
+        "high": ["high_holder_concentration", "high_bundler_density", "high_sniper_or_insider_concentration"]
+      },
+      "allowed_use": "entry_hint_or_filter",
+      "forbidden_use": "claim_confirmed_insider_or_controller"
+    },
+    "camouflage_power": {
+      "description": "Forgeability of volume, social signals, and narrative shell. Negative force.",
+      "source_fields": ["is_wash_trading", "bot_degen_count", "bot_degen_rate", "stat.bot_degen_rate", "fresh_wallets", "stat.fresh_wallet_rate", "link.verify_status", "dev.twitter_name_change_history", "dev.twitter_del_post_token_count", "dev.twitter_create_token_count", "dev.dexscr_ad", "dev.dexscr_boost_fee", "dev.dexscr_trending_bar", "hot_level", "rank"],
+      "field_group": "canonical_bytes_0_5_safety_risk / canonical_bytes_0_6_dev_creator / canonical_bytes_0_9_social_attention / canonical_bytes_0_10_heat",
+      "raw_or_derived": "raw_gmgn_byte",
+      "bin_edges": {
+        "unknown": "camouflage-related fields missing",
+        "low": "is_wash_trading != true AND bot_degen_rate < 0.10 AND stat.fresh_wallet_rate < 0.30",
+        "medium": "is_wash_trading == true OR bot_degen_rate >= 0.10 OR stat.fresh_wallet_rate >= 0.30 OR dev.dexscr_boost_fee > 0",
+        "high": "is_wash_trading == true AND (bot_degen_rate >= 0.20 OR stat.fresh_wallet_rate >= 0.50 OR dev.twitter_del_post_token_count > 0)"
+      },
+      "reason_labels": {
+        "medium": ["possible_wash_or_paid_attention", "fresh_wallet_or_bot_density"],
+        "high": ["wash_trading_with_bot_or_fresh_wallet_cluster", "narrative_shell_instability"]
+      },
+      "allowed_use": "entry_hint_or_filter",
+      "forbidden_use": "final_fraud_verdict"
+    },
+    "exit_power": {
+      "description": "Ability and incentive of early actors to exit on later participants. Negative force.",
+      "source_fields": ["sell_amount_percentage", "realized_profit", "unrealized_profit", "avg_cost", "avg_sold", "last_active_timestamp", "creator_token_status", "creator_close", "top_10_holder_rate", "liquidity", "market_cap", "dev_token_burn_ratio", "renounced_mint", "renounced_freeze_account", "rat_trader_amount_rate", "bundler_trader_amount_rate", "sell_volume_{1m,5m,1h,6h,24h}", "price_change_percent1m", "price_change_percent5m", "price_change_percent1h"],
+      "field_group": "canonical_bytes_0_1_price_market_cap / canonical_bytes_0_2_volume / canonical_bytes_0_5_safety_risk / canonical_bytes_0_6_dev_creator / canonical_bytes_0_11_holder_trader",
+      "raw_or_derived": "raw_gmgn_byte_plus_ratio",
+      "derived_metrics": ["liquidity_market_cap_ratio", "sell_pressure_ratio"],
+      "bin_edges": {
+        "unknown": "exit-related fields missing",
+        "low": "top_10_holder_rate < 0.30 AND liquidity_market_cap_ratio >= 0.05 AND creator_close != true",
+        "medium": "top_10_holder_rate >= 0.30 OR liquidity_market_cap_ratio < 0.05 OR creator_close == true OR sell_pressure_ratio >= 0.50",
+        "high": "top_10_holder_rate >= 0.55 OR liquidity_market_cap_ratio < 0.02 OR rat_trader_amount_rate >= 0.20 OR bundler_trader_amount_rate >= 0.25 OR creator_token_status == 'close'"
+      },
+      "reason_labels": {
+        "medium": ["moderate_exit_pressure", "limited_liquidity_against_market_cap"],
+        "high": ["high_exit_pressure", "early_actor_exit_capacity", "weak_exit_liquidity"]
+      },
+      "allowed_use": "entry_hint_or_filter",
+      "forbidden_use": "sell_signal_or_execution_command"
+    }
+  },
+  "risk_density": {
+    "description": "Aggregated GMGN risk-hint density. This is an entry hint, not a final chain conclusion.",
+    "score_range": [0.0, 1.0],
+    "weighted_contributions": [
+      {
+        "risk_id": "RD01_UNRENOUNCED_MINT",
+        "source_fields": ["renounced_mint"],
+        "field_group": "canonical_bytes_0_5_safety_risk",
+        "condition": "renounced_mint == false",
+        "weight": 0.20,
+        "reason_label": "mint_not_renounced"
+      },
+      {
+        "risk_id": "RD02_UNRENOUNCED_FREEZE",
+        "source_fields": ["renounced_freeze_account"],
+        "field_group": "canonical_bytes_0_5_safety_risk",
+        "condition": "renounced_freeze_account == false",
+        "weight": 0.20,
+        "reason_label": "freeze_not_renounced"
+      },
+      {
+        "risk_id": "RD03_HIGH_RUG_RATIO",
+        "source_fields": ["rug_ratio"],
+        "field_group": "canonical_bytes_0_5_safety_risk",
+        "condition": "rug_ratio >= 0.50",
+        "weight": 0.20,
+        "reason_label": "high_rug_ratio_hint",
+        "note": "GMGN black-box risk score. Hint only; not final proof."
+      },
+      {
+        "risk_id": "RD04_WASH_TRADING",
+        "source_fields": ["is_wash_trading"],
+        "field_group": "canonical_bytes_0_5_safety_risk",
+        "condition": "is_wash_trading == true",
+        "weight": 0.15,
+        "reason_label": "wash_trading_hint"
+      },
+      {
+        "risk_id": "RD05_HIGH_BUNDLER_RATE",
+        "source_fields": ["bundler_rate", "bundler_trader_amount_rate", "bundler_wallets"],
+        "field_group": "canonical_bytes_0_3_holders_wallets / canonical_bytes_0_5_safety_risk",
+        "condition": "bundler_rate >= 0.25 OR bundler_trader_amount_rate >= 0.25",
+        "weight": 0.12,
+        "reason_label": "high_bundler_density_hint"
+      },
+      {
+        "risk_id": "RD06_HIGH_TOP10_CONCENTRATION",
+        "source_fields": ["top_10_holder_rate"],
+        "field_group": "canonical_bytes_0_4_concentration",
+        "condition": "top_10_holder_rate >= 0.55",
+        "weight": 0.10,
+        "reason_label": "top10_holder_concentration"
+      },
+      {
+        "risk_id": "RD07_CREATOR_EXITED_OR_CLOSE",
+        "source_fields": ["creator_token_status", "creator_close"],
+        "field_group": "canonical_bytes_0_6_dev_creator",
+        "condition": "creator_close == true OR creator_token_status == 'close'",
+        "weight": 0.08,
+        "reason_label": "creator_exit_hint"
+      },
+      {
+        "risk_id": "RD08_BOT_OR_FRESH_WALLET_DENSITY",
+        "source_fields": ["bot_degen_rate", "stat.bot_degen_rate", "fresh_wallets", "stat.fresh_wallet_rate"],
+        "field_group": "canonical_bytes_0_5_safety_risk / canonical_bytes_0_4_concentration",
+        "condition": "bot_degen_rate >= 0.20 OR stat.bot_degen_rate >= 0.20 OR stat.fresh_wallet_rate >= 0.50",
+        "weight": 0.08,
+        "reason_label": "bot_or_fresh_wallet_density"
+      }
+    ],
+    "level_edges": {
+      "unknown": "no risk-density source fields available",
+      "low": [0.0, 0.25],
+      "medium": [0.25, 0.50],
+      "high": [0.50, 0.75],
+      "extreme": [0.75, 1.0]
+    },
+    "missing_field_behavior": {
+      "critical_fields": ["renounced_mint", "renounced_freeze_account", "rug_ratio", "is_wash_trading", "bundler_rate", "top_10_holder_rate"],
+      "if_all_critical_missing": "level=unknown; entry_aux_decision=UNKNOWN",
+      "if_some_missing": "score_from_available_fields; append missing_fields and downgrade_reasons"
+    },
+    "allowed_use": "entry_hint_or_filter",
+    "forbidden_use": "final_chain_conclusion_or_final_trade_decision"
+  },
+  "entry_aux_decision": {
+    "description": "Deterministic mapping from basic_gate, five forces, and risk density into an entry-layer auxiliary decision.",
+    "decision_values": ["PASS", "CAUTION", "SKIP", "FILTERED_OUT", "UNKNOWN"],
+    "mapping_order": [
+      "FILTERED_OUT",
+      "UNKNOWN",
+      "SKIP",
+      "CAUTION",
+      "PASS"
+    ],
+    "rules": [
+      {
+        "decision": "FILTERED_OUT",
+        "when": "basic_gate.decision == 'FILTERED_OUT'",
+        "next_action": "STOP",
+        "rationale": "Candidate lacks minimum market thickness; persist candidate record but do not spend full workflow resources."
+      },
+      {
+        "decision": "UNKNOWN",
+        "when": "basic_gate.decision == 'UNKNOWN' OR risk_density.level == 'unknown' OR any force == 'unknown' for required available fields",
+        "next_action": "RUN_FULL_WORKFLOW_WITH_CAUTION",
+        "rationale": "Unknown is not a pass or fail; full workflow may be needed if candidate is manually requested, but confidence must be downgraded."
+      },
+      {
+        "decision": "SKIP",
+        "when": "risk_density.level in ['high','extreme'] OR control_power == 'high' OR camouflage_power == 'high' OR exit_power == 'high'",
+        "next_action": "RUN_FULL_WORKFLOW_WITH_CAUTION",
+        "batch_skip_allowed_only_with_flag": "--skip-entry-risk high",
+        "rationale": "Risk density or negative force is high. Batch mode may skip with explicit flag; single-token run continues with caution per frozen spec."
+      },
+      {
+        "decision": "CAUTION",
+        "when": "risk_density.level == 'medium' OR control_power == 'medium' OR camouflage_power == 'medium' OR exit_power == 'medium' OR absorption_power == 'weak' OR diffusion_power == 'weak'",
+        "next_action": "RUN_FULL_WORKFLOW_WITH_CAUTION",
+        "rationale": "Candidate may be worth deeper analysis but should carry visible entry-layer warnings."
+      },
+      {
+        "decision": "PASS",
+        "when": "basic_gate.decision == 'PASS' AND absorption_power in ['normal','strong'] AND diffusion_power in ['growing','broad'] AND control_power in ['low','medium'] AND camouflage_power in ['low','medium'] AND exit_power in ['low','medium'] AND risk_density.level in ['low','medium']",
+        "next_action": "RUN_FULL_WORKFLOW",
+        "rationale": "Candidate has enough positive force and no extreme entry-layer risk. Final decision still belongs to S06."
+      }
+    ],
+    "forbidden_interpretations": [
+      "entry_aux_decision is not a buy signal",
+      "PASS is not PAPER_ONLY",
+      "SKIP is not a final fraud or sell verdict",
+      "FILTERED_OUT is not a permanent token ban"
+    ]
+  },
+  "safety": {
+    "paper_only": true,
+    "live_trading_allowed": false,
+    "private_key_access_allowed": false,
+    "wallet_signing_allowed": false,
+    "transaction_broadcast_allowed": false,
+    "gmgn_swap_allowed": false,
+    "gmgn_multi_swap_allowed": false,
+    "gmgn_cooking_allowed": false,
+    "auto_deploy_allowed": false,
+    "forbidden_claims": [
+      "确定庄家",
+      "确定内幕",
+      "一定会涨",
+      "BUY_READY",
+      "EXECUTION_READY",
+      "LIVE_TRADING_READY",
+      "PRODUCTION_READY"
+    ],
+    "threshold_semantics": "Entry-layer research hint only. These thresholds may filter or annotate candidates, but may not be used as final trade decisions or execution permission."
+  }
+}

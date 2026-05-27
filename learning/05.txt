@@ -1,0 +1,417 @@
+# 05｜pump.fun / Raydium 池子生命周期：一个 Meme Token 怎么从“刚创建”变成“可被候选入口处理”
+
+## 这一篇要解决的问题
+
+这篇服务于 `Skill 01：meme-candidate-entry` 的入口判断。
+
+候选入口要回答的不是“这个币能买吗”，而是“这个 token 是否存在、是否可被观察、是否已经有交易池和流动性、是否可以交给下一步 token panel”。要看懂这个判断，就要先看懂一个 Solana meme token 从创建到可交易通常经历哪些阶段。
+
+## 正文
+
+### 1. Skill 01 关心的核心问题
+
+`meme-candidate-entry` 的设计文件里有几个关键检查：
+
+- 地址格式是否有效
+- token 是否存在
+- 是否有交易池
+- 是否有流动性
+- 是否还在 bonding curve 上
+- entry_source 来自哪里
+- entry_reason 为什么要看它
+
+这些检查背后对应一条真实链路：
+
+```text
+token 创建
+→ 早期发行或内盘阶段
+→ bonding curve 交易
+→ 达到迁移条件
+→ 进入 Raydium / AMM 池
+→ 出现可观察的流动性和市场数据
+→ 被 GMGN / 用户 / 信号源捕捉
+→ 进入候选入口
+```
+
+候选入口只确认“这个对象是否值得进入研究流水线”。它不负责判断好坏，更不输出买入动作。
+
+---
+
+### 2. pump.fun 的 bonding curve 在做什么
+
+pump.fun 这类发行平台让一个 meme token 在正式进入 AMM 池之前，就可以沿着一条价格曲线被买卖。
+
+这条曲线的作用是：
+
+```text
+买的人越多，价格沿曲线上升；
+卖的人越多，价格沿曲线回落；
+当曲线阶段达到某个完成条件，流动性会迁移到外部交易池。
+```
+
+这里的重点是：在 bonding curve 阶段，token 还处在“发行曲线内”的交易环境里。它可以有买卖、价格、热度和早期钱包行为，但它和已经进入 Raydium 池的 token 不是同一种市场状态。
+
+对 `Skill 01` 来说，`is_on_curve` 或 `launchpad_status` 这类字段的意义是：
+
+```text
+这个 token 是否已经从早期发行曲线进入可被常规池子观察的阶段。
+```
+
+如果还在 bonding curve 上，系统不一定要直接 BLOCK，但至少要 WARN 或 downgrade。因为后续 token panel、wallet roles、wallet structure 需要的流动性、持有人、交易池、价格数据可能还不稳定。
+
+---
+
+### 3. Raydium 池子意味着什么
+
+Raydium 代表更常规的 AMM 交易环境。
+
+当 token 有了 Raydium 池，意味着至少可以观察这些东西：
+
+- 池子地址
+- 流动性规模
+- 价格和成交
+- 买卖方向
+- 持有人变化
+- 交易者行为
+
+所以 Skill 01 里的：
+
+```text
+has_pool: true
+has_liquidity: true
+```
+
+不是“可以买”的意思，而是：
+
+```text
+这个 token 已经具备进入下一步数据面板观察的基本条件。
+```
+
+Raydium 池子也可能很危险。池子可以很浅，流动性可以被抽走，早期价格可以被少数钱包推动。所以“有池子”只是研究资格，不是质量证明。
+
+---
+
+### 4. 一个 token 从创建到进入候选入口的阶段
+
+可以把生命周期拆成 5 个观察阶段。
+
+#### 阶段 1：Token 创建
+
+链上出现 mint。这个阶段能说明：
+
+```text
+这个 token 地址存在。
+```
+
+不能说明：
+
+```text
+它有市场、有人买、能交易、值得研究。
+```
+
+Skill 01 对应字段：
+
+```text
+token_exists
+creation_timestamp
+launchpad
+```
+
+---
+
+#### 阶段 2：早期发行 / bonding curve
+
+token 在发行平台上开始沿曲线交易。
+
+这个阶段能说明：
+
+```text
+已经出现早期交易行为。
+```
+
+不能说明：
+
+```text
+已经形成稳定市场。
+```
+
+Skill 01 对应字段：
+
+```text
+is_on_curve
+launchpad_status
+entry_source
+```
+
+判断含义：
+
+```text
+仍在 curve 上 → 可以记录，但要 downgrade 或 WARN。
+```
+
+---
+
+#### 阶段 3：曲线完成 / 迁移
+
+如果买入推进到某个条件，平台会把 token 迁移到外部 AMM 池。
+
+这个阶段是候选入口最容易误解的地方。
+
+迁移完成意味着：
+
+```text
+它从发行曲线进入更公开的交易池环境。
+```
+
+不意味着：
+
+```text
+风险解除。
+```
+
+Skill 01 对应判断：
+
+```text
+有 pool，但还要看 liquidity 是否大于 0。
+```
+
+---
+
+#### 阶段 4：Raydium / AMM 池交易
+
+这时 token 的数据更适合进入 token panel。
+
+Skill 01 只要确认：
+
+```text
+has_pool = true
+has_liquidity = true
+```
+
+然后交给下一步：
+
+```text
+meme-token-panel
+```
+
+更复杂的安全问题不在 Skill 01 解决，比如：
+
+- LP 是否安全
+- mint authority 是否关闭
+- freeze authority 是否存在
+- holder 是否集中
+- 成交是否刷量
+
+这些应该进入 Skill 02 或后续 skill。
+
+---
+
+#### 阶段 5：被 GMGN 或用户发现
+
+token 进入候选入口通常来自几类来源：
+
+```text
+manual_ca
+gmgn_trending
+gmgn_trenches
+gmgn_signal
+smartmoney_cluster
+telegram
+```
+
+这些来源都只是“为什么看它”的解释。
+
+它们不代表：
+
+```text
+这个 token 已经通过研究。
+```
+
+GMGN trending 只是热，trenches 只是新，signal 只是某类钱包或市场行为被捕捉。进入候选池只是进入研究流程。
+
+---
+
+### 5. 字段反推四问
+
+#### bonding curve
+
+**量什么：**
+
+衡量 token 是否还处在发行曲线内，价格和流动性是否还由 launchpad 机制主导。
+
+**能伪：**
+
+热度、早期交易和快速上涨都可能来自少数钱包推动，不能单独说明真实市场质量。
+
+**能算：**
+
+可以通过 launchpad、launchpad_status、is_on_curve、pool 信息、交易池是否存在间接判断。
+
+**本质：**
+
+它决定 Skill 01 是否应把 token 交给下一步，还是先 downgrade / WARN。
+
+---
+
+#### pool
+
+**量什么：**
+
+衡量 token 是否已有可观察的 AMM 交易环境。
+
+**能伪：**
+
+池子可以很浅，可以短期注入后抽走，可以只服务于制造表面交易。
+
+**能算：**
+
+通过 biggest_pool_address、pool address、liquidity、pair 数据判断。
+
+**本质：**
+
+pool 是“可研究条件”，不是“安全条件”。
+
+---
+
+#### liquidity
+
+**量什么：**
+
+衡量池子里是否存在可交易深度。
+
+**能伪：**
+
+短时流动性可以被注入，成交可以被制造，流动性深度可能不足以支持真实退出。
+
+**能算：**
+
+通过 liquidity、pool reserve、成交深度、滑点数据间接判断。
+
+**本质：**
+
+Skill 01 只判断是否为 0 或明显缺失。深度质量交给 Skill 02 和 Skill 06。
+
+---
+
+#### GMGN entry source
+
+**量什么：**
+
+衡量 token 为什么进入视野。
+
+**能伪：**
+
+trending 可以由成交量推动，signal 可以由少数钱包行为触发，telegram 可以是噪音来源。
+
+**能算：**
+
+通过 entry_source、source command、entry_reason、后续 evidence 记录。
+
+**本质：**
+
+entry source 是候选来源，不是判断结论。
+
+---
+
+### 6. Skill 01 的正确边界
+
+Skill 01 做的事：
+
+```text
+验证 token 是否存在；
+验证地址是否有效；
+验证是否有池子；
+验证是否有流动性；
+记录候选来源和原因；
+判断是否可以进入 meme-token-panel。
+```
+
+Skill 01 不做的事：
+
+```text
+不判断是否买入；
+不判断是否安全；
+不判断庄家结构；
+不判断 smart money 是否可靠；
+不输出 PAPER_ONLY；
+不跳到 trade-gate。
+```
+
+它的输出应该是：
+
+```text
+PASS / WARN / BLOCK / ERROR / NEED_MORE_DATA
+```
+
+而不是：
+
+```text
+BUY / GOOD / ALPHA / SURE / SAFE
+```
+
+---
+
+### 7. 和后续 skill 的关系
+
+Skill 01 只是入口。
+
+```text
+Skill 01：这个 token 能不能进入研究？
+Skill 02：这个 token 的市场和安全面板是什么？
+Skill 03：参与的钱包分别像什么角色？
+Skill 04：钱包之间有没有结构关系？
+Skill 05：证据能不能形成链？
+Skill 06：门控给 BLOCK / WATCH / PAPER_ONLY / NEED_MORE_DATA。
+```
+
+如果 Skill 01 把“进入候选”误写成“信号成立”，后面所有 skill 都会被污染。
+
+---
+
+### 8. 对项目实现的约束
+
+在 `/root/sikk-gmgn/` 里实现 Skill 01 时，应坚持：
+
+1. `entry_source` 只表示来源，不表示质量。
+2. `entry_reason` 只解释为什么看它，不输出结论。
+3. `has_pool = true` 只表示可以进入 token panel。
+4. `has_liquidity = true` 只表示非零流动性，不代表可安全退出。
+5. `is_on_curve = true` 应触发 WARN 或 downgrade，而不是直接通过无风险。
+6. 缺失字段写入 `missing_fields`，不填默认值。
+7. 任何 GMGN 来源都不能直接转成 gate decision。
+
+---
+
+## 小结
+
+- pump.fun bonding curve 是早期发行和交易机制，适合观察早期行为，但不等于稳定市场。
+- Raydium / AMM 池让 token 进入更可观察的交易环境，但有池子不等于安全。
+- Skill 01 的职责是判断 token 是否可以进入研究流水线，不是判断是否交易。
+- GMGN trending / trenches / signal 都是候选来源，不能直接当判断结论。
+- 候选入口一旦把“发现”误当成“信号”，后面的证据链和门控都会被污染。
+
+## 下一篇预告
+
+下一篇写第 06 篇：GMGN 三个数据源机制：trending vs trenches vs signal。
+
+重点解决：
+
+```text
+GMGN 是怎么把 token 推到你眼前的？
+trending、trenches、signal 分别在量什么？
+它们各自可能被什么污染？
+为什么它们都只能作为 entry_source，而不是 gate decision？
+```
+
+---
+
+## 学习反馈
+
+你可以写：
+
+1. 哪里看懂了？
+2. 哪里没看懂？
+3. 哪个地方想展开？
+4. 这个主题和你的真实问题有什么关系？
+
+请写在这行下面：
