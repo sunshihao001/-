@@ -104,10 +104,10 @@ done_state:
   tests_passed: true
   result_md_written: true
   git_committed: true
-  git_commit: "59710d6f99943c6c97f4633eb08a9885dd523d06"
+  git_commit: "a4382a06d5fc4e88fb355725f4b813b01b6dda11"
   git_pushed: true
-  github_issue_commented: PENDING_AFTER_COMMIT
-  github_issue_comment_url: "PENDING_AFTER_COMMIT"
+  github_issue_commented: true
+  github_issue_comment_url: "https://github.com/sunshihao001/-/issues/1#issuecomment-4552892408"
   hermes_local_synced_with_remote: true
 ```
 
