@@ -166,3 +166,35 @@ Walking Skeleton 阶段验收通过的标准（grill 问题 3 → 选项 B：鲁
 
 Phase 1 safe-mode 不变。No live trading / signing / broadcast / swap / auto deploy.
 
+---
+
+# Freeze Record
+
+freeze_id: sol-ai-pro-dev-workflow-freeze-20260527-004
+frozen_at: 2026-05-27T00:00:00Z
+status: FROZEN_FOR_COGNITION_UPGRADE
+scope: v2 cognition upgrade freeze — CONTEXT.md + docs/acceptance.md v2 terms/checks
+
+## Frozen Inputs
+
+- `CONTEXT.md`
+- `docs/acceptance.md`
+- `docs/freeze_record.md`
+
+## Source Materials
+
+- `CONTEXT.freeze_candidate.md`
+- `docs/acceptance.freeze_candidate.md`
+- `design/v2工作流总纲.md`
+- `design/v2迁移说明.md`
+- `reports/V2-CONTENT-CANDIDATE-001/review.md`
+
+## Changes Applied
+
+- `CONTEXT.md`: appended v2 System/Skill/State/Gate/Evidence/Safety terms
+- `docs/acceptance.md`: appended v2 Architecture/Skill Boundary/Artifact/Evidence/Gate/Controller/Legacy/Safety acceptance groups
+
+## Safety Boundary
+
+Phase 1 safe-mode unchanged. No live trading / signing / broadcast / swap / auto deploy. v2 cognition upgrade does not authorize production readiness.
+

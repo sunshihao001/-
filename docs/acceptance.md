@@ -74,3 +74,130 @@
 - 跨 skill 真实字段依赖关系
 - Five-Forces Gate 逻辑
 - 真实 GMGN 接口调用
+
+---
+
+## v2 认知升级验收条款（V2-FREEZE-001 freeze）
+
+依据：`docs/acceptance.freeze_candidate.md`，PM/review INTERNAL_PASS
+
+### 验收范围
+
+本组验收：v2 总体结构、10 个业务 Skill 边界、workflow-controller 边界、artifact/evidence/gate/state 规则、legacy 前置层对齐、安全边界。
+本组不验收：代码实现、真实 API 接入、真实交易、私钥/签名/swap/broadcast、生产可用性。
+
+### A. Architecture
+
+- [ ] A1. v2 declares exactly 10 business skills and 1 workflow-controller.
+- [ ] A2. workflow-controller is not counted as a business skill.
+- [ ] A3. each business skill has a unique responsibility.
+- [ ] A4. each business skill has upstream inputs and downstream consumers.
+- [ ] A5. v2 declares paper-only research as the current boundary.
+- [ ] A6. v2 declares PAPER_ONLY as the current highest allowed state.
+
+### B. Business Skill Boundary
+
+For each business skill:
+- [ ] B1. one-sentence responsibility exists.
+- [ ] B2. upstream inputs are listed.
+- [ ] B3. stable outputs are listed.
+- [ ] B4. failure modes are listed.
+- [ ] B5. downstream consumers are listed.
+- [ ] B6. forbidden outputs/actions are listed.
+- [ ] B7. raw data access policy is listed.
+- [ ] B8. judgment permission is listed.
+- [ ] B9. gate permission is listed.
+- [ ] B10. minimum handoff fields are listed.
+
+### C. Artifact
+
+- [ ] C1. each artifact has a producer skill.
+- [ ] C2. each artifact has at least one consumer or archive purpose.
+- [ ] C3. each artifact has status.
+- [ ] C4. each artifact has missing_fields or equivalent.
+- [ ] C5. each artifact has downgrade_reasons or equivalent.
+- [ ] C6. each artifact has valid_until or explicit no-expiry rationale.
+- [ ] C7. controller may validate artifact presence and shape.
+- [ ] C8. controller must not modify business artifact content.
+
+### D. Evidence
+
+- [ ] D1. supporting_evidence is preserved where a claim exists.
+- [ ] D2. counter_evidence is preserved where a claim exists.
+- [ ] D3. missing_fields are preserved and never replaced by default values.
+- [ ] D4. downgrade_reasons are preserved.
+- [ ] D5. source_artifacts or evidence_refs are preserved.
+- [ ] D6. GMGN labels are treated as hints, not final classification.
+- [ ] D7. deterministic accusation language is forbidden.
+- [ ] D8. evidence-chain keeps alternatives and conflicts when unresolved.
+
+### E. Gate
+
+- [ ] E1. candidate-entry owns entry gate only.
+- [ ] E2. trade-gate owns positive gate only.
+- [ ] E3. negative-gate owns negative gate / veto only.
+- [ ] E4. negative-gate may downgrade or block but cannot upgrade.
+- [ ] E5. controller must not override negative-gate final_state.
+- [ ] E6. trade-gate output must pass through negative-gate before final_state.
+- [ ] E7. PAPER_ONLY is not live trading permission.
+- [ ] E8. BLOCK must include blocker_reasons or veto_rules_hit.
+
+### F. Controller
+
+- [ ] F1. controller orchestrates skill order.
+- [ ] F2. controller records phase_state.
+- [ ] F3. controller records gate_sequence.
+- [ ] F4. controller records artifact_manifest or equivalent.
+- [ ] F5. controller supports resume_point.
+- [ ] F6. controller writes blocker_report when blocked.
+- [ ] F7. controller writes workflow_summary.
+- [ ] F8. controller does not read GMGN raw or chain raw.
+- [ ] F9. controller does not produce business conclusions.
+- [ ] F10. controller does not patch missing business fields.
+
+### G. Legacy / Front-Layer Alignment
+
+- [ ] G1. candidate-entry, token-panel, and wallet-roles may be treated as natural v1/v2 front-layer alignment points.
+- [ ] G2. old front-layer artifacts may be recognized as legacy-compatible.
+- [ ] G3. legacy-compatible does not mean v2 schema-compliant.
+- [ ] G4. incomplete old downstream designs must not create fake migration debt.
+- [ ] G5. structure-evidence, chip-control, evidence-chain, lifecycle-classifier, trade-gate, negative-gate, and paper-validation should be designed directly as v2 components.
+
+### H. Safety
+
+- [ ] H1. live trading is forbidden.
+- [ ] H2. private key access is forbidden.
+- [ ] H3. wallet signing is forbidden.
+- [ ] H4. transaction broadcast is forbidden.
+- [ ] H5. gmgn swap / multi-swap / cooking is forbidden.
+- [ ] H6. auto deploy is forbidden.
+- [ ] H7. production readiness claims are forbidden.
+- [ ] H8. "确定庄家", "确定内幕", and "一定会涨" style claims are forbidden.
+- [ ] H9. future human acceptance is required before any non-paper boundary change.
+
+### Required Review Questions
+
+1. Does every skill have a clear producer/consumer relationship?
+2. Does any skill duplicate another skill's judgment?
+3. Does controller accidentally become a business skill?
+4. Can final_state be traced through gate_sequence?
+5. Can every BLOCK be traced to blocker or veto evidence?
+6. Can every NEED_MORE_DATA be traced to missing_fields?
+7. Are legacy artifacts clearly separated from v2 standard artifacts?
+8. Are all safety prohibitions visible in the candidate docs?
+
+### Acceptance Decision Labels
+
+- `INTERNAL_PASS`: 候选文档达到内部一致性，可交给用户最终确认。
+- `PATCH_REQUIRED`: 需要补丁后再评审。
+- `BLOCKED`: 关键边界不清，不能 freeze。
+- `OUT_OF_SCOPE`: 请求已经越过 paper-only / theory boundary。
+
+Human labels: `HUMAN_ACCEPTED`, `HUMAN_REJECTED`
+
+### 待冻结问题
+
+1. Architecture 是否采用 08.md 的 A1-A6，还是 04.md 的 A1-A7？
+2. Artifact 是否采用 08.md 的 C1-C8，还是 04.md 的 C1-C10？
+3. Controller 是否采用 08.md 的 F1-F10，还是 04.md 的 F1-F12？
+4. acceptance 文档最终语言风格是否继续中文解释 + English terms？
